@@ -1,12 +1,12 @@
-import { createContext, useReducer, type ReactNode } from 'react';
+import { createContext } from 'react'
 
-import type { AuthState, PayloadInterface } from '../types';
+import type { AuthState, PayloadInterface } from '../types'
 
 export interface AuthContextType {
-  state: AuthState;
-  dispatch: React.Dispatch<AuthAction>;
-  login: (payload: PayloadInterface) => void;
-  logout: () => void;
+  state: AuthState
+  dispatch: React.Dispatch<AuthAction>
+  login: (payload: PayloadInterface) => void
+  logout: () => void
 }
 
 export type AuthAction =
@@ -14,7 +14,7 @@ export type AuthAction =
   | { type: 'LOGIN_SUCCESS'; payload: PayloadInterface }
   | { type: 'LOGIN_ERROR'; payload: string }
   | { type: 'LOGOUT' }
-  | { type: 'RESTORE_TOKEN'; payload: PayloadInterface };
+  | { type: 'RESTORE_TOKEN'; payload: PayloadInterface }
 
 const initialState: AuthState = {
   user: null,
@@ -22,12 +22,12 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   isAuthenticated: false,
-};
+}
 
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
     case 'LOGIN_START':
-      return { ...state, loading: true, error: null };
+      return { ...state, loading: true, error: null }
     case 'LOGIN_SUCCESS':
       return {
         ...state,
@@ -36,43 +36,23 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         token: action.payload.token,
         isAuthenticated: true,
         error: null,
-      };
+      }
     case 'LOGIN_ERROR':
-      return { ...state, loading: false, error: action.payload };
+      return { ...state, loading: false, error: action.payload }
     case 'LOGOUT':
-      return initialState;
+      return initialState
     case 'RESTORE_TOKEN':
       return {
         ...state,
         user: action.payload.user,
         token: action.payload.token,
         isAuthenticated: true,
-      };
+      }
     default:
-      return state;
+      return state
   }
-};
+}
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useReducer(authReducer, initialState);
-
-  const login = (payloadParam: PayloadInterface) => {
-    dispatch({ type: 'LOGIN_SUCCESS', payload: payloadParam });
-    localStorage.setItem('token', payloadParam.token);
-    localStorage.setItem('user', JSON.stringify(payloadParam.user));
-  };
-
-  const logout = () => {
-    dispatch({ type: 'LOGOUT' });
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-  };
-
-  return (
-    <AuthContext.Provider value={{ state, dispatch, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+export { authReducer, initialState }
