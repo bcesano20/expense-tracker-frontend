@@ -1,3 +1,32 @@
+# Expense Tracker Frontend
+
+## CI Checks
+
+Before pushing or opening a PR, run these commands locally to ensure the CI pipeline passes:
+
+```bash
+# 1. Check for lint errors
+npm run lint
+
+# 2. Check for TypeScript errors
+npx tsc --noEmit
+
+# 3. Check code formatting
+npx prettier --check "src/**/*.{ts,tsx,css}"
+
+# 4. Verify the build succeeds
+npm run build
+```
+
+To auto-fix lint and formatting issues:
+
+```bash
+npm run lint:fix
+npm run format
+```
+
+---
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
