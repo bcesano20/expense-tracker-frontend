@@ -1,9 +1,9 @@
 import { createContext } from 'react'
 
-import type { AuthState, PayloadInterface } from '../types'
+import type { AuthStateInterface, PayloadInterface } from '../types'
 
 export interface AuthContextType {
-  state: AuthState
+  state: AuthStateInterface
   dispatch: React.Dispatch<AuthAction>
   login: (payload: PayloadInterface) => void
   logout: () => void
@@ -16,7 +16,7 @@ export type AuthAction =
   | { type: 'LOGOUT' }
   | { type: 'RESTORE_TOKEN'; payload: PayloadInterface }
 
-const initialState: AuthState = {
+const initialState: AuthStateInterface = {
   user: null,
   token: null,
   loading: false,
@@ -24,7 +24,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
 }
 
-const authReducer = (state: AuthState, action: AuthAction): AuthState => {
+const authReducer = (state: AuthStateInterface, action: AuthAction): AuthStateInterface => {
   switch (action.type) {
     case 'LOGIN_START':
       return { ...state, loading: true, error: null }

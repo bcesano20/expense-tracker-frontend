@@ -2,8 +2,8 @@ import api from './api'
 
 import { BACKEND_API_ENDPOINTS } from '../helpers/constants'
 import {
-  type User,
-  type ApiResponse,
+  type UserInterface,
+  type ApiResponseInterface,
   type PayloadInterface,
   type RegisterRequestInterface,
   type LoginRequestInterface,
@@ -11,7 +11,7 @@ import {
 
 export const authService = {
   register: async (req: RegisterRequestInterface) => {
-    const response = await api.post<ApiResponse<PayloadInterface>>(
+    const response = await api.post<ApiResponseInterface<PayloadInterface>>(
       BACKEND_API_ENDPOINTS.REGISTER,
       req
     )
@@ -19,12 +19,17 @@ export const authService = {
   },
 
   login: async (req: LoginRequestInterface) => {
-    const response = await api.post<ApiResponse<PayloadInterface>>(BACKEND_API_ENDPOINTS.LOGIN, req)
+    const response = await api.post<ApiResponseInterface<UserInterface>>(
+      BACKEND_API_ENDPOINTS.LOGIN,
+      req
+    )
     return response.data
   },
 
   getProfile: async () => {
-    const response = await api.get<ApiResponse<User>>(BACKEND_API_ENDPOINTS.PROFILE)
+    const response = await api.get<ApiResponseInterface<UserInterface>>(
+      BACKEND_API_ENDPOINTS.PROFILE
+    )
     return response.data
   },
 }
