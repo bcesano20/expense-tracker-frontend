@@ -1,4 +1,4 @@
-export interface User {
+export interface UserInterface {
   id: number
   name: string
   lastName: string
@@ -8,7 +8,7 @@ export interface User {
   updatedAt: string
 }
 
-export interface Account {
+export interface AccountInterface {
   id: number
   name: string
   currency: string
@@ -17,7 +17,7 @@ export interface Account {
   updatedAt: string
 }
 
-export interface Card {
+export interface CardInterface {
   id: number
   name: string
   bank: string
@@ -30,7 +30,7 @@ export interface Card {
   updatedAt: string
 }
 
-export interface Expense {
+export interface ExpenseInterface {
   id: number
   description: string
   amount: number
@@ -41,14 +41,14 @@ export interface Expense {
   billingYear: number
   accountId: number
   card?: {
-    card: Card
+    card: CardInterface
   }
-  installments?: Installment[]
+  installments?: InstallmentInterface[]
   createdAt: string
   updatedAt: string
 }
 
-export interface Installment {
+export interface InstallmentInterface {
   id: number
   installmentNumber: number
   totalInstallments: number
@@ -57,7 +57,7 @@ export interface Installment {
   paymentYear: number
 }
 
-export interface ApiResponse<T> {
+export interface ApiResponseInterface<T> {
   success: boolean
   data?: T
   error?: string
@@ -65,8 +65,8 @@ export interface ApiResponse<T> {
   token?: string
 }
 
-export interface AuthState {
-  user: User | null
+export interface AuthStateInterface {
+  user: UserInterface | null
   token: string | null
   loading: boolean
   error: string | null
@@ -74,7 +74,7 @@ export interface AuthState {
 }
 
 export interface PayloadInterface {
-  user: User
+  user: UserInterface
   token: string
 }
 
