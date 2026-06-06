@@ -1,3 +1,4 @@
+// ENTITIES INTERFACES
 export interface UserInterface {
   id: number
   name: string
@@ -57,6 +58,7 @@ export interface InstallmentInterface {
   paymentYear: number
 }
 
+// API AND CONTEXT INTERFACES
 export interface ApiResponseInterface<T> {
   success: boolean
   data?: T
@@ -78,6 +80,7 @@ export interface PayloadInterface {
   token: string
 }
 
+// AUTH INTERFACES
 export interface RegisterRequestInterface {
   name: string
   lastName: string
@@ -88,4 +91,115 @@ export interface RegisterRequestInterface {
 export interface LoginRequestInterface {
   email: string
   password: string
+}
+
+// REPORTS INTERFACES
+export interface ResumeDataInterface {
+  month: number
+  year: number
+  totalExpensesThisMonth: number
+  expenseCountThisMonth: number
+  totalInstallmentsDueThisMonth: number
+  installmentCountThisMonth: number
+  dailyAverageExpense: number
+  monthlyProjection: number
+}
+
+export interface PeriodInterface {
+  month: number
+  year: number
+  reportDate: string
+}
+
+export interface SummaryInterface {
+  totalSpent: number
+  expenseCount: number
+  categoryCount: number
+  cardCount: number
+}
+
+export interface CategoryFilter {
+  category: string
+  total: number
+  percentage: number
+}
+
+export interface PaymentMethodFilterInterface {
+  method: string
+  total: number
+  count: number
+}
+
+export interface ExpenseDetailInterface {
+  id: number
+  description: string
+  amount: number
+  date: string
+  category: string
+  paymentMethod: string
+  card: string | null
+}
+
+export interface InstallmentDetailInterface {
+  id: number
+  expenseDescription: string
+  expenseAmount: number
+  installment: string // "1/3", "2/3", etc
+  amount: number
+}
+
+export interface CardToPayInterface {
+  cardId: number
+  cardName: string
+  cardBank: string
+  cardType: 'credit' | 'debit'
+  network: string
+  currentBalnce?: number // only debit
+  totalToPay: number
+  installmentsCount: number
+  installmentDetails: InstallmentDetailInterface[]
+}
+
+export interface MonthlyReportDataInterface {
+  period: PeriodInterface
+  summary: SummaryInterface
+  expensesByCategory: CategoryFilter[]
+  expensesByPaymentMethod: PaymentMethodFilterInterface[]
+  expenseDetails: ExpenseDetailInterface[]
+  cardsToPay: CardToPayInterface[]
+  totalCardPayments: number
+}
+
+// For analitics by category
+export interface CategoryAnalysisInterface {
+  category: string
+  totalPeriod: number
+  monthAverage: number
+  months: Record<string, number>
+}
+
+export interface CategoryAnalysisDataInterface {
+  period: string
+  totalSpent: number
+  categories: CategoryAnalysisInterface[]
+}
+
+// For Comparasion
+interface MonthInterface {
+  month: number
+  year: number
+  total: number
+  count: number
+}
+
+interface ComparasionInterface {
+  difference: number
+  changePercentaje: number
+  trend: 'INCREASE' | 'DECREASE' | 'SAME'
+}
+
+export interface ComparasionDataInterface {
+  currentMonth: MonthInterface
+  previousMonth: MonthInterface
+  comparasion: ComparasionInterface
 }
