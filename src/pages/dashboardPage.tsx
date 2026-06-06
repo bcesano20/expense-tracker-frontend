@@ -26,7 +26,7 @@ export const DashboardPage = () => {
       const accountId = 1
       fetchSummary(accountId)
     }
-  }, [month, year, state.user])
+  }, [month, year, state.user, fetchSummary])
 
   const monthName = MONTHS[month - 1]
 

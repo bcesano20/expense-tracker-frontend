@@ -29,6 +29,7 @@ function AppContent() {
         const parsedUser = JSON.parse(user)
         dispatch({ type: 'RESTORE_TOKEN', payload: { user: parsedUser, token } })
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error restaurando token:', error)
       }
     }

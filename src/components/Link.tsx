@@ -11,7 +11,13 @@ interface LinkProps {
 export const Link = ({ linkTo, isExternal = false, className, onClick, children }: LinkProps) => {
   if (isExternal) {
     return (
-      <a href={linkTo} target="_blank" rel="noopener noreferrer" className={className} onClick={onClick}>
+      <a
+        href={linkTo}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+        onClick={onClick}
+      >
         {children}
       </a>
     )

@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import { HamburgerMenu } from './HamburgerMenu'
 
 export const Navbar = () => {
-  const { state, logout } = useAuth()
+  const { logout } = useAuth()
   const navigate = useNavigate()
 
   const handleLogout = () => {
