@@ -4,20 +4,21 @@ interface LinkProps {
   linkTo: string
   isExternal?: boolean
   className?: string
+  onClick?: () => void
   children: React.ReactNode
 }
 
-export const Link = ({ linkTo, isExternal = false, className, children }: LinkProps) => {
+export const Link = ({ linkTo, isExternal = false, className, onClick, children }: LinkProps) => {
   if (isExternal) {
     return (
-      <a href={linkTo} target="_blank" rel="noopener noreferrer" className={className}>
+      <a href={linkTo} target="_blank" rel="noopener noreferrer" className={className} onClick={onClick}>
         {children}
       </a>
     )
   }
 
   return (
-    <RouterLink to={linkTo} className={className}>
+    <RouterLink to={linkTo} className={className} onClick={onClick}>
       {children}
     </RouterLink>
   )
