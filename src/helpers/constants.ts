@@ -10,6 +10,13 @@ export const BACKEND_API_ENDPOINTS = {
   GET_CATEGORIES_REPORT: 'reports/category',
   GET_CARDS_REPORT: 'reports/cards',
   GET_COMPARISON_REPORT: 'repotrs/comparison',
+
+  // ACCOUNTS
+  ACCOUNTS: '/accounts',
+
+  // EXPENSES
+  // This is the basic route, according the method that is call the route is different, also has another effect if the method and a param is passed
+  EXPENSE_BASIC_API_ROUTE: '/expenses',
 }
 
 export const ROUTES = {
@@ -32,6 +39,11 @@ export const ERROR_MESSAGES = {
   LOGIN_ERROR: 'Error al iniciar sesión',
   EMAIL_FORMAT_INVALID: 'El formato de email no es valido',
   REPORTS_LOAD_ERROR: 'Error al cargar el resumen',
+  EXPENSES_LOAD_ERROR: 'Error al cargar los gastos',
+  EXPENSE_GET_ERROR: 'Error al recuperar el gasto',
+  CREATE_EXPENSE_ERROR: 'Error al crear el gasto',
+  UPDATE_EXPENSE_ERROR: 'Error al actualizar el gasto',
+  DELETE_EXPENSE_ERROR: 'Error al eliminar el gasto',
 }
 
 export const MONTHS = [

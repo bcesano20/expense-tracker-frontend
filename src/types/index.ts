@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 // ENTITIES INTERFACES
 export interface UserInterface {
   id: number
@@ -78,6 +80,13 @@ export interface AuthStateInterface {
 export interface PayloadInterface {
   user: UserInterface
   token: string
+}
+
+export interface ColumnInterface<T> {
+  key: keyof T
+  label: string
+  render?: (value: any, row: T) => ReactNode
+  width?: string
 }
 
 // AUTH INTERFACES
@@ -202,4 +211,12 @@ export interface ComparasionDataInterface {
   currentMonth: MonthInterface
   previousMonth: MonthInterface
   comparasion: ComparasionInterface
+}
+
+// EXPENSES INTERFACES
+export interface GetExpenseRequestInterface {
+  accountId?: number //For Get the complete list or just one
+  month?: number
+  year?: number
+  category?: string
 }
