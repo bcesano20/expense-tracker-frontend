@@ -85,7 +85,7 @@ export interface PayloadInterface {
 export interface ColumnInterface<T> {
   key: keyof T
   label: string
-  render?: (value: any, row: T) => ReactNode
+  render?: (value: unknown, row: T) => ReactNode
   width?: string
 }
 

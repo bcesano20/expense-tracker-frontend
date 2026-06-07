@@ -248,6 +248,7 @@ export const ExpensesPage = () => {
 
         {showForm && (
           <ExpenseModal
+            key={selectedExpense?.id ?? 'new'}
             isOpen={showForm}
             expense={selectedExpense}
             onClose={() => {

@@ -4,29 +4,26 @@ import type { ExpenseInterface, GetExpenseRequestInterface } from '../types'
 import { expensesService } from '../services/expenseServices'
 import { ERROR_MESSAGES } from '../helpers/constants'
 
-export const useExpenses = (accountId: number) => {
+export const useExpenses = (_accountId: number) => {
   const [expenses, setExpenses] = useState<ExpenseInterface[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
   // Get Expenses with filters (date period and category)
-  const fetchExpenses = useCallback(
-    async (request: GetExpenseRequestInterface) => {
-      try {
-        setLoading(true)
-        setError(null)
-        const data = await expensesService.getExpenses(request)
-        setExpenses(data || [])
-      } catch (err) {
-        setError(ERROR_MESSAGES.EXPENSES_LOAD_ERROR)
-        // eslint-disable-next-line no-console
-        console.error(err)
-      } finally {
-        setLoading(false)
-      }
-    },
-    [accountId]
-  )
+  const fetchExpenses = useCallback(async (request: GetExpenseRequestInterface) => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await expensesService.getExpenses(request)
+      setExpenses(data || [])
+    } catch (err) {
+      setError(ERROR_MESSAGES.EXPENSES_LOAD_ERROR)
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
   // The useCallback avoid the un-necessary re-render
   const getExpenseById = useCallback(async (id: number) => {

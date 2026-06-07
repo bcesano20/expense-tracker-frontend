@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 import type { ExpenseInterface } from '../../types'
 
@@ -17,13 +17,23 @@ export const ExpenseModal = ({
   onSubmit,
   loading = false,
 }: ExpenseModalProps) => {
-  const [formData, setFormData] = useState<Partial<ExpenseInterface>>({
-    description: '',
-    amount: 0,
-    date: new Date().toISOString().split('T')[0],
-    category: 'Otro',
-    paymentMethod: 'cash',
-  })
+  const [formData, setFormData] = useState<Partial<ExpenseInterface>>(
+    expense
+      ? {
+          description: expense.description,
+          amount: expense.amount,
+          date: expense.date,
+          category: expense.category,
+          paymentMethod: expense.paymentMethod,
+        }
+      : {
+          description: '',
+          amount: 0,
+          date: new Date().toISOString().split('T')[0],
+          category: 'Otro',
+          paymentMethod: 'cash',
+        }
+  )
 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [installmentsCount, setInstallmentsCount] = useState<number>(1)
@@ -37,30 +47,6 @@ export const ExpenseModal = ({
     { value: 'transfer', label: '🏦 Transferencia' },
     { value: 'other', label: '📱 Otro' },
   ]
-
-  // Load the expense data if is an update
-  useEffect(() => {
-    if (expense) {
-      setFormData({
-        description: expense.description,
-        amount: expense.amount,
-        date: expense.date,
-        category: expense.category,
-        paymentMethod: expense.paymentMethod,
-      })
-    } else {
-      setFormData({
-        description: '',
-        amount: 0,
-        date: new Date().toISOString().split('T')[0],
-        category: 'Otro',
-        paymentMethod: 'cash',
-      })
-    }
-    setErrors({})
-    setInstallmentsCount(1)
-    setShowInstallments(false)
-  }, [expense, isOpen])
 
   // Valid form
   const validateForm = () => {
@@ -131,7 +117,7 @@ export const ExpenseModal = ({
 
       await onSubmit(dataToSubmit)
       onClose()
-    } catch (error) {
+    } catch {
       setErrors({
         submit: 'Error al guardar el gasto. Intenta de nuevo.',
       })
