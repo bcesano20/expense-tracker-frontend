@@ -6,6 +6,7 @@ import { useAuth } from './hooks/useAuth'
 import { AuthProvider } from './contexts/authProvider'
 import { LoginPage } from './pages/loginPage'
 import { DashboardPage } from './pages/dashboardPage'
+import { ExpensesPage } from './pages/expensesPage'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { state } = useAuth()
@@ -46,6 +47,14 @@ function AppContent() {
         element={
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.EXPENSES}
+        element={
+          <ProtectedRoute>
+            <ExpensesPage />
           </ProtectedRoute>
         }
       />
