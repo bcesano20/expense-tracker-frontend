@@ -28,7 +28,7 @@ export const ExpensesTable = ({
       key: 'date',
       label: 'Fecha',
       width: '100px',
-      render: value => formatDate(value),
+      render: value => formatDate(value as string),
     },
     {
       key: 'description',
@@ -39,15 +39,19 @@ export const ExpensesTable = ({
       key: 'amount',
       label: 'Monto',
       width: '120px',
-      render: value => <span className="font-semibold text-gray-900">{formatCurrency(value)}</span>,
+      render: value => (
+        <span className="font-semibold text-gray-900">{formatCurrency(value as number)}</span>
+      ),
     },
     {
       key: 'category',
       label: 'Categoría',
       width: '140px',
       render: value => (
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(value)}`}>
-          {value}
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(value as string)}`}
+        >
+          {value as string}
         </span>
       ),
     },
@@ -57,8 +61,8 @@ export const ExpensesTable = ({
       width: '140px',
       render: value => (
         <div className="flex items-center gap-2">
-          <span>{getPaymentMethodIcon(value)}</span>
-          <span className="capitalize">{value === 'card' ? 'Tarjeta' : value}</span>
+          <span>{getPaymentMethodIcon(value as string)}</span>
+          <span className="capitalize">{value === 'card' ? 'Tarjeta' : (value as string)}</span>
         </div>
       ),
     },
