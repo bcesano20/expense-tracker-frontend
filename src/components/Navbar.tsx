@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../hooks/useAuth'
 import { HamburgerMenu } from './HamburgerMenu'
+import { ROUTES } from '../helpers/constants'
 
 export const Navbar = () => {
   const { logout } = useAuth()
@@ -22,13 +23,16 @@ export const Navbar = () => {
         {/* Desktop nav — hidden below 900px */}
         <div className="hidden min-[900px]:flex gap-4 items-center">
           <nav className="flex gap-6">
-            <a href="/dashboard" className="text-gray-700 hover:text-blue-600">
+            <a href={ROUTES.DASHBOARD} className="text-gray-700 hover:text-blue-600">
               Dashboard
             </a>
-            <a href="/gastos" className="text-gray-700 hover:text-blue-600">
+            <a href={ROUTES.EXPENSES} className="text-gray-700 hover:text-blue-600">
               Gastos
             </a>
-            <a href="/reportes" className="text-gray-700 hover:text-blue-600">
+            <a href={ROUTES.ACCOUNTS} className="text-gray-700 hover:text-blue-600">
+              Cuentas
+            </a>
+            <a href={ROUTES.REPORTS} className="text-gray-700 hover:text-blue-600">
               Reportes
             </a>
           </nav>

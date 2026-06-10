@@ -220,3 +220,9 @@ export interface GetExpenseRequestInterface {
   year?: number
   category?: string
 }
+
+// ACCOUNTS INTERFACES
+export interface AccountServiceInterface {
+  name: string
+  currency: string
+}
