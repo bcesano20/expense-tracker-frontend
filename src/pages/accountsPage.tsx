@@ -136,6 +136,7 @@ export const AccountsPage = () => {
 
       {/* Modales */}
       <AccountModal
+        key={selectedAccount?.id ?? 'new'}
         isOpen={showAccountModal}
         account={selectedAccount}
         onClose={() => {

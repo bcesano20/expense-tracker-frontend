@@ -15,7 +15,7 @@ export const useAccounts = () => {
       setError(null)
       const data = await accountService.getAccounts()
       setAccounts(data ?? [])
-    } catch (err) {
+    } catch {
       setError(ERROR_MESSAGES.ACCOUNTS_LOAD_ERROR)
     } finally {
       setLoading(false)

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 import { ERROR_MESSAGES } from '../../helpers/constants'
 import type { AccountInterface, AccountServiceInterface } from '../../types'
@@ -11,6 +11,11 @@ interface AccountModalProps {
   loading?: boolean
 }
 
+const DEFAULT_ACCOUNT_DATA: AccountServiceInterface = {
+  name: '',
+  currency: 'USD',
+}
+
 export const AccountModal = ({
   isOpen,
   account,
@@ -18,17 +23,10 @@ export const AccountModal = ({
   onSubmit,
   loading = false,
 }: AccountModalProps) => {
-  const [formData, setFormData] = useState<AccountServiceInterface>({ name: '', currency: 'USD' })
+  const [formData, setFormData] = useState<AccountServiceInterface>(
+    account ? { name: account.name, currency: account.currency } : DEFAULT_ACCOUNT_DATA
+  )
   const [errors, setErrors] = useState<Record<string, string>>({})
-
-  useEffect(() => {
-    if (account) {
-      setFormData({ name: account.name, currency: account.currency })
-    } else {
-      setFormData({ name: '', currency: 'USD' })
-    }
-    setErrors({})
-  }, [account, isOpen])
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -57,7 +55,7 @@ export const AccountModal = ({
     try {
       await onSubmit(formData)
       onClose()
-    } catch (error) {
+    } catch {
       setErrors({ submit: ERROR_MESSAGES.OPERATION_ACCOUNT_ERROR })
     }
   }
