@@ -47,6 +47,8 @@ export const ERROR_MESSAGES = {
   PASSWORD_INVALID_ERROR: 'La contraseña debe tener al menos 6 caracteres',
   PASSWORD_NOT_MATCH: 'Las contraseñas no coinciden',
   REGISTER_ERROR: 'Error al registrarse',
+  MONTHLY_REPORT_ERROR: 'Error al cargar el reporte mensual',
+  COMPARISION_ERROR: 'Error al obtener la comparativa',
 }
 
 export const MONTHS = [
