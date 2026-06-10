@@ -9,6 +9,7 @@ import { DashboardPage } from './pages/dashboardPage'
 import { ExpensesPage } from './pages/expensesPage'
 import { RegisterPage } from './pages/registerPage'
 import { ReportsPage } from './pages/reportsPage'
+import { AccountsPage } from './pages/accountsPage'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { state } = useAuth()
@@ -69,6 +70,14 @@ function AppContent() {
         element={
           <ProtectedRoute>
             <ReportsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.ACCOUNTS}
+        element={
+          <ProtectedRoute>
+            <AccountsPage />
           </ProtectedRoute>
         }
       />

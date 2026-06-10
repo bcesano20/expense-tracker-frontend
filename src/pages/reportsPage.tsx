@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 
-import { MONTHS } from '../helpers/constants'
+import { MONTHS, ROUTES } from '../helpers/constants'
+import { useAccounts } from '../hooks/useAccounts'
 import { useMonthlyReport } from '../hooks/useMonthlyReports'
 import {
+  EmptyState,
   Navbar,
   MonthSelector,
   CategoryPieChart,
@@ -14,17 +16,49 @@ export const ReportsPage = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1)
   const [year, setYear] = useState(new Date().getFullYear())
 
-  const accountId = 1 // En producción, obtener del contexto
+  const { accounts, loading: accountsLoading, error: accountsError } = useAccounts()
+  const activeAccount = accounts[0] ?? null
+
   const { report, comparative, loading, error, fetchMonthlyReport, fetchComparative } =
-    useMonthlyReport(accountId)
+    useMonthlyReport(activeAccount?.id ?? 0)
 
   // Load reports when the month and the year changes
   useEffect(() => {
+    if (!activeAccount) return
     fetchMonthlyReport(month, year)
     fetchComparative()
-  }, [month, year, fetchMonthlyReport, fetchComparative])
+  }, [month, year, activeAccount, fetchMonthlyReport, fetchComparative])
 
   const monthName = MONTHS[month - 1]
+
+  if (accountsLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-7xl mx-auto p-6">
+          <div className="bg-blue-100 text-blue-700 p-4 rounded-lg">Cargando cuenta...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (accountsError || !activeAccount) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-7xl mx-auto p-6">
+          <div className="card">
+            <EmptyState
+              icon="🏦"
+              title="No tenés ninguna cuenta"
+              description="Creá una cuenta para poder ver los reportes de tus gastos."
+              action={{ label: 'Crear cuenta', onClick: () => window.location.assign(ROUTES.ACCOUNTS) }}
+            />
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -61,7 +95,7 @@ export const ReportsPage = () => {
               <div className="bg-white p-6 rounded-lg shadow">
                 <p className="text-sm text-gray-600 mb-2">Total Gastado</p>
                 <p className="text-3xl font-bold text-gray-900">
-                  ${report.summary.expenseCount.toFixed(2)}
+                  ${report.summary.totalSpent.toFixed(2)}
                 </p>
                 <p className="text-xs text-gray-500 mt-2">{report.summary.expenseCount} gastos</p>
               </div>
