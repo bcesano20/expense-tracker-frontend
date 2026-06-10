@@ -17,6 +17,10 @@ export const BACKEND_API_ENDPOINTS = {
   // EXPENSES
   // This is the basic route, according the method that is call the route is different, also has another effect if the method and a param is passed
   EXPENSE_BASIC_API_ROUTE: '/expenses',
+
+  // CARDS
+  GET_CARDS_ACCOUNT: '/cards/account',
+  CARDS_API_ENDPOINT: '/cards',
 }
 
 export const ROUTES = {
@@ -54,6 +58,12 @@ export const ERROR_MESSAGES = {
   UPDATE_ACCOUNT_ERROR: 'Error al actualizar la cuenta',
   DELETE_ACCOUNT_ERROR: 'Error al eliminar la cuenta',
   OPERATION_ACCOUNT_ERROR: 'Error al guardar, intenta de nuevo',
+  GET_CARDS_ERROR: 'Error al traer tarjetas de esta cuenta',
+  CREATE_CARD_ERROR: 'Error al crear la tarjeta',
+  UPDATE_CARD_ERROR: 'Error al actualizar esta tarjeta',
+  DELETE_CARD_ERROR: 'Erro al eliminar esta tarjeta',
+  CLOSE_DATE_LIMIT_ERROR: 'El día de cierre debe estar entre 1 y 31',
+  BALANCE_ERROR: 'El saldo debe ser mayor o igual a 0',
 }
 
 export const MONTHS = [
