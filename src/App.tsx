@@ -1,15 +1,26 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 
 import { ROUTES } from './helpers/constants'
 import { useAuth } from './hooks/useAuth'
 import { AuthProvider } from './contexts/authProvider'
-import { LoginPage } from './pages/loginPage'
-import { DashboardPage } from './pages/dashboardPage'
-import { ExpensesPage } from './pages/expensesPage'
-import { RegisterPage } from './pages/registerPage'
-import { ReportsPage } from './pages/reportsPage'
-import { AccountsPage } from './pages/accountsPage'
+
+const LoginPage = lazy(() => import('./pages/loginPage').then(m => ({ default: m.LoginPage })))
+const RegisterPage = lazy(() =>
+  import('./pages/registerPage').then(m => ({ default: m.RegisterPage }))
+)
+const DashboardPage = lazy(() =>
+  import('./pages/dashboardPage').then(m => ({ default: m.DashboardPage }))
+)
+const ExpensesPage = lazy(() =>
+  import('./pages/expensesPage').then(m => ({ default: m.ExpensesPage }))
+)
+const ReportsPage = lazy(() =>
+  import('./pages/reportsPage').then(m => ({ default: m.ReportsPage }))
+)
+const AccountsPage = lazy(() =>
+  import('./pages/accountsPage').then(m => ({ default: m.AccountsPage }))
+)
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { state } = useAuth()
@@ -40,49 +51,57 @@ function AppContent() {
   }, [dispatch])
 
   return (
-    <Routes>
-      <Route
-        path={ROUTES.LOGIN}
-        element={state.isAuthenticated ? <Navigate to={ROUTES.DASHBOARD} /> : <LoginPage />}
-      />
-      <Route
-        path={ROUTES.REGISTER}
-        element={state.isAuthenticated ? <Navigate to={ROUTES.DASHBOARD} /> : <RegisterPage />}
-      />
-      <Route
-        path={ROUTES.DASHBOARD}
-        element={
-          <ProtectedRoute>
-            <DashboardPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={ROUTES.EXPENSES}
-        element={
-          <ProtectedRoute>
-            <ExpensesPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={ROUTES.REPORTS}
-        element={
-          <ProtectedRoute>
-            <ReportsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={ROUTES.ACCOUNTS}
-        element={
-          <ProtectedRoute>
-            <AccountsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route path={ROUTES.LANDING} element={<Navigate to={ROUTES.DASHBOARD} />} />
-    </Routes>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-500">
+          Cargando...
+        </div>
+      }
+    >
+      <Routes>
+        <Route
+          path={ROUTES.LOGIN}
+          element={state.isAuthenticated ? <Navigate to={ROUTES.DASHBOARD} /> : <LoginPage />}
+        />
+        <Route
+          path={ROUTES.REGISTER}
+          element={state.isAuthenticated ? <Navigate to={ROUTES.DASHBOARD} /> : <RegisterPage />}
+        />
+        <Route
+          path={ROUTES.DASHBOARD}
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.EXPENSES}
+          element={
+            <ProtectedRoute>
+              <ExpensesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.REPORTS}
+          element={
+            <ProtectedRoute>
+              <ReportsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.ACCOUNTS}
+          element={
+            <ProtectedRoute>
+              <AccountsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path={ROUTES.LANDING} element={<Navigate to={ROUTES.DASHBOARD} />} />
+      </Routes>
+    </Suspense>
   )
 }
 

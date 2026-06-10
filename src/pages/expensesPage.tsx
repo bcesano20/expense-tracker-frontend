@@ -16,7 +16,9 @@ export const ExpensesPage = () => {
   const [selectedExpense, setSelectedExpense] = useState<ExpenseInterface | null>(null)
   const [showForm, setShowForm] = useState<boolean>(false)
 
-  const { activeAccount, loading: accountsLoading, error: accountsError } = useAccounts()
+  const { accounts, loading: accountsLoading, error: accountsError } = useAccounts()
+  const activeAccount = accounts[0] ?? null
+
   const { expenses, loading, error, fetchExpenses, deleteExpense, createExpense, updateExpense } =
     useExpenses(activeAccount?.id ?? 0)
 
