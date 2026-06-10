@@ -33,6 +33,16 @@ export interface CardInterface {
   updatedAt: string
 }
 
+export interface CardFormInterface {
+  name: string
+  bank: string
+  type: 'credit' | 'debit'
+  network: 'visa' | 'mastercard' | 'american express' | 'naranja x' | 'cabal'
+  balance?: number
+  closeDay?: number
+  accountId: number
+}
+
 export interface ExpenseInterface {
   id: number
   description: string
