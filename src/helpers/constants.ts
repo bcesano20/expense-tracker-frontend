@@ -44,6 +44,9 @@ export const ERROR_MESSAGES = {
   CREATE_EXPENSE_ERROR: 'Error al crear el gasto',
   UPDATE_EXPENSE_ERROR: 'Error al actualizar el gasto',
   DELETE_EXPENSE_ERROR: 'Error al eliminar el gasto',
+  PASSWORD_INVALID_ERROR: 'La contraseña debe tener al menos 6 caracteres',
+  PASSWORD_NOT_MATCH: 'Las contraseñas no coinciden',
+  REGISTER_ERROR: 'Error al registrarse',
 }
 
 export const MONTHS = [

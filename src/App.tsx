@@ -7,6 +7,7 @@ import { AuthProvider } from './contexts/authProvider'
 import { LoginPage } from './pages/loginPage'
 import { DashboardPage } from './pages/dashboardPage'
 import { ExpensesPage } from './pages/expensesPage'
+import { RegisterPage } from './pages/registerPage'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { state } = useAuth()
@@ -41,6 +42,10 @@ function AppContent() {
       <Route
         path={ROUTES.LOGIN}
         element={state.isAuthenticated ? <Navigate to={ROUTES.DASHBOARD} /> : <LoginPage />}
+      />
+      <Route
+        path={ROUTES.REGISTER}
+        element={state.isAuthenticated ? <Navigate to={ROUTES.DASHBOARD} /> : <RegisterPage />}
       />
       <Route
         path={ROUTES.DASHBOARD}
