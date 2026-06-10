@@ -49,6 +49,11 @@ export const ERROR_MESSAGES = {
   REGISTER_ERROR: 'Error al registrarse',
   MONTHLY_REPORT_ERROR: 'Error al cargar el reporte mensual',
   COMPARISION_ERROR: 'Error al obtener la comparativa',
+  ACCOUNTS_LOAD_ERROR: 'Error al traer cuentas',
+  CREATE_ACCOUNT_ERROR: 'Error al crear una cuenta',
+  UPDATE_ACCOUNT_ERROR: 'Error al actualizar la cuenta',
+  DELETE_ACCOUNT_ERROR: 'Error al eliminar la cuenta',
+  OPERATION_ACCOUNT_ERROR: 'Error al guardar, intenta de nuevo',
 }
 
 export const MONTHS = [
