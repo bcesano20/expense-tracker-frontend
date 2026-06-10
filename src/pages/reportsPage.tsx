@@ -52,7 +52,10 @@ export const ReportsPage = () => {
               icon="🏦"
               title="No tenés ninguna cuenta"
               description="Creá una cuenta para poder ver los reportes de tus gastos."
-              action={{ label: 'Crear cuenta', onClick: () => window.location.assign(ROUTES.ACCOUNTS) }}
+              action={{
+                label: 'Crear cuenta',
+                onClick: () => window.location.assign(ROUTES.ACCOUNTS),
+              }}
             />
           </div>
         </div>
