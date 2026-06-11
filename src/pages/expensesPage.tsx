@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { MONTHS, ROUTES } from '../helpers/constants'
 import type { ExpenseInterface } from '../types'
+import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
 import { useExpenses } from '../hooks/useExpenses'
 import { Button, EmptyState, ExpenseModal, MonthSelector, Navbar } from '../components'
@@ -16,8 +17,14 @@ export const ExpensesPage = () => {
   const [selectedExpense, setSelectedExpense] = useState<ExpenseInterface | null>(null)
   const [showForm, setShowForm] = useState<boolean>(false)
 
-  const { accounts, loading: accountsLoading, error: accountsError } = useAccounts()
-  const activeAccount = accounts[0] ?? null
+  const { state } = useAuth()
+  const { accounts, loading: accountsLoading, error: accountsError, fetchAccounts } = useAccounts()
+
+  useEffect(() => {
+    fetchAccounts()
+  }, [fetchAccounts])
+
+  const activeAccount = accounts.find(a => a.id === state.activeAccountId) ?? accounts[0] ?? null
 
   const { expenses, loading, error, fetchExpenses, deleteExpense, createExpense, updateExpense } =
     useExpenses(activeAccount?.id ?? 0)

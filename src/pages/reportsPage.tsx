@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { MONTHS, ROUTES } from '../helpers/constants'
-import { useAccounts } from '../hooks/useAccounts'
+import { useAuth } from '../hooks/useAuth'
 import { useMonthlyReport } from '../hooks/useMonthlyReports'
 import {
   EmptyState,
@@ -16,33 +16,21 @@ export const ReportsPage = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1)
   const [year, setYear] = useState(new Date().getFullYear())
 
-  const { accounts, loading: accountsLoading, error: accountsError } = useAccounts()
-  const activeAccount = accounts[0] ?? null
+  const { state } = useAuth()
+  const activeAccountId = state.activeAccountId
 
   const { report, comparative, loading, error, fetchMonthlyReport, fetchComparative } =
-    useMonthlyReport(activeAccount?.id ?? 0)
+    useMonthlyReport(activeAccountId ?? 0)
 
-  // Load reports when the month and the year changes
   useEffect(() => {
-    if (!activeAccount) return
+    if (!activeAccountId) return
     fetchMonthlyReport(month, year)
     fetchComparative()
-  }, [month, year, activeAccount, fetchMonthlyReport, fetchComparative])
+  }, [month, year, activeAccountId, fetchMonthlyReport, fetchComparative])
 
   const monthName = MONTHS[month - 1]
 
-  if (accountsLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div className="max-w-7xl mx-auto p-6">
-          <div className="bg-blue-100 text-blue-700 p-4 rounded-lg">Cargando cuenta...</div>
-        </div>
-      </div>
-    )
-  }
-
-  if (accountsError || !activeAccount) {
+  if (!activeAccountId) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
