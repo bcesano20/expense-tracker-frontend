@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ROUTES } from './helpers/constants'
 import { useAuth } from './hooks/useAuth'
 import { AuthProvider } from './contexts/authProvider'
+import { accountService } from './services/accountService'
 
 const LoginPage = lazy(() => import('./pages/loginPage').then(m => ({ default: m.LoginPage })))
 const RegisterPage = lazy(() =>
@@ -33,7 +34,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 }
 
 function AppContent() {
-  const { state, dispatch } = useAuth()
+  const { state, dispatch, setActiveAccount } = useAuth()
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -49,6 +50,21 @@ function AppContent() {
       }
     }
   }, [dispatch])
+
+  useEffect(() => {
+    if (state.isAuthenticated && state.activeAccountId === null) {
+      accountService
+        .getAccounts()
+        .then(accounts => {
+          if (accounts && accounts.length > 0) {
+            setActiveAccount(accounts[0].id)
+          }
+        })
+        .catch(() => {
+          // pages handle the no-account state themselves
+        })
+    }
+  }, [state.isAuthenticated, state.activeAccountId, setActiveAccount])
 
   return (
     <Suspense

@@ -18,8 +18,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('user')
   }
 
+  const setActiveAccount = (id: number) => {
+    dispatch({ type: 'SET_ACTIVE_ACCOUNT', payload: id })
+  }
+
   return (
-    <AuthContext.Provider value={{ state, dispatch, login, logout }}>
+    <AuthContext.Provider value={{ state, dispatch, login, logout, setActiveAccount }}>
       {children}
     </AuthContext.Provider>
   )

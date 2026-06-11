@@ -7,6 +7,7 @@ export interface AuthContextType {
   dispatch: React.Dispatch<AuthAction>
   login: (payload: PayloadInterface) => void
   logout: () => void
+  setActiveAccount: (id: number) => void
 }
 
 export type AuthAction =
@@ -15,6 +16,7 @@ export type AuthAction =
   | { type: 'LOGIN_ERROR'; payload: string }
   | { type: 'LOGOUT' }
   | { type: 'RESTORE_TOKEN'; payload: PayloadInterface }
+  | { type: 'SET_ACTIVE_ACCOUNT'; payload: number }
 
 const initialState: AuthStateInterface = {
   user: null,
@@ -22,6 +24,7 @@ const initialState: AuthStateInterface = {
   loading: false,
   error: null,
   isAuthenticated: false,
+  activeAccountId: null,
 }
 
 const authReducer = (state: AuthStateInterface, action: AuthAction): AuthStateInterface => {
@@ -48,6 +51,8 @@ const authReducer = (state: AuthStateInterface, action: AuthAction): AuthStateIn
         token: action.payload.token,
         isAuthenticated: true,
       }
+    case 'SET_ACTIVE_ACCOUNT':
+      return { ...state, activeAccountId: action.payload }
     default:
       return state
   }

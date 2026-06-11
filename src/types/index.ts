@@ -85,6 +85,7 @@ export interface AuthStateInterface {
   loading: boolean
   error: string | null
   isAuthenticated: boolean
+  activeAccountId: number | null
 }
 
 export interface PayloadInterface {

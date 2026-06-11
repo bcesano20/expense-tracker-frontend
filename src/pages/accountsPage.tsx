@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 
 import type { AccountInterface, CardFormInterface, CardInterface } from '../types'
+import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCards } from '../hooks/useCards'
 import { Navbar, AccountModal, CardModal } from '../components'
 
 export const AccountsPage = () => {
+  const { state, setActiveAccount } = useAuth()
+
   const [selectedAccountId, setSelectedAccountId] = useState<number | null>(null)
   const [showAccountModal, setShowAccountModal] = useState<boolean>(false)
   const [selectedAccount, setSelectedAccount] = useState<AccountInterface | null>(null)
@@ -22,7 +25,7 @@ export const AccountsPage = () => {
     deleteAccount,
   } = useAccounts()
 
-  const activeAccountId = selectedAccountId ?? accounts[0]?.id ?? null
+  const activeAccountId = selectedAccountId ?? state.activeAccountId ?? accounts[0]?.id ?? null
 
   const {
     cards,
@@ -127,6 +130,7 @@ export const AccountsPage = () => {
                   key={account.id}
                   onClick={() => {
                     setSelectedAccountId(account.id)
+                    setActiveAccount(account.id)
                   }}
                   className={`p-6 rounded-lg border-2 cursor-pointer transition ${
                     activeAccountId === account.id
