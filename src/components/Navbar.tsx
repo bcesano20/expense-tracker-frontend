@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 
+import { ROUTES } from '../helpers/constants'
 import { useAuth } from '../hooks/useAuth'
 import { HamburgerMenu } from './HamburgerMenu'
-import { ROUTES } from '../helpers/constants'
+import { Link } from './Link'
 
 export const Navbar = () => {
   const { logout } = useAuth()
@@ -10,7 +11,7 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     logout()
-    navigate('/login')
+    navigate(ROUTES.LOGIN)
   }
 
   return (
@@ -23,18 +24,18 @@ export const Navbar = () => {
         {/* Desktop nav — hidden below 900px */}
         <div className="hidden min-[900px]:flex gap-4 items-center">
           <nav className="flex gap-6">
-            <a href={ROUTES.DASHBOARD} className="text-gray-700 hover:text-blue-600">
-              Dashboard
-            </a>
-            <a href={ROUTES.EXPENSES} className="text-gray-700 hover:text-blue-600">
+            <Link linkTo={ROUTES.DASHBOARD} className="text-gray-700 hover:text-blue-600">
+              Tablero
+            </Link>
+            <Link linkTo={ROUTES.EXPENSES} className="text-gray-700 hover:text-blue-600">
               Gastos
-            </a>
-            <a href={ROUTES.ACCOUNTS} className="text-gray-700 hover:text-blue-600">
+            </Link>
+            <Link linkTo={ROUTES.ACCOUNTS} className="text-gray-700 hover:text-blue-600">
               Cuentas
-            </a>
-            <a href={ROUTES.REPORTS} className="text-gray-700 hover:text-blue-600">
+            </Link>
+            <Link linkTo={ROUTES.REPORTS} className="text-gray-700 hover:text-blue-600">
               Reportes
-            </a>
+            </Link>
           </nav>
 
           <button

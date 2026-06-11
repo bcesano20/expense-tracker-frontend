@@ -6,7 +6,7 @@ import { useAuth } from '../hooks/useAuth'
 import { Link } from './Link'
 
 const NAV_LINKS = [
-  { label: 'Dashboard', to: ROUTES.DASHBOARD },
+  { label: 'Tablero', to: ROUTES.DASHBOARD },
   { label: 'Gastos', to: ROUTES.EXPENSES },
   { label: 'Cuentas', to: ROUTES.ACCOUNTS },
   { label: 'Reportes', to: ROUTES.REPORTS },
