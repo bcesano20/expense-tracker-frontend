@@ -16,17 +16,17 @@ const ICONS = {
 export const DashboardPage = () => {
   const { state } = useAuth()
   const { data, loading, error, fetchSummary } = useReports()
+
   const navigate = useNavigate()
 
   const [month, setMonth] = useState(new Date().getMonth() + 1)
   const [year, setYear] = useState(new Date().getFullYear())
 
   useEffect(() => {
-    if (state.user) {
-      const accountId = 1
-      fetchSummary(accountId)
+    if (state.activeAccountId) {
+      fetchSummary(state.activeAccountId)
     }
-  }, [month, year, state.user, fetchSummary])
+  }, [state.activeAccountId, fetchSummary])
 
   const monthName = MONTHS[month - 1]
 
@@ -147,7 +147,7 @@ export const DashboardPage = () => {
         )}
 
         {/* Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
           <Link
             linkTo={ROUTES.EXPENSES}
             className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition border-l-4 border-blue-500"
