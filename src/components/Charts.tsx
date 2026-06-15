@@ -185,7 +185,8 @@ export const ComparativeChart = ({
       >
         <p className="text-sm text-gray-600 mb-2">Variación</p>
         <p className={`text-2xl font-bold ${trendColor}`}>
-          {trendIcon} ${Math.abs(difference).toFixed(2)} ({percentageChange.toFixed(1)}%)
+          {trendIcon} ${Math.abs(difference ?? 0).toFixed(2)} ({(percentageChange ?? 0).toFixed(1)}
+          %)
         </p>
         <p className="text-xs text-gray-500 mt-2">
           {trend === 'INCREASE'

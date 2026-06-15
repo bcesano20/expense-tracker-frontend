@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { MONTHS, ROUTES } from '../helpers/constants'
 import { useAuth } from '../hooks/useAuth'
 import { useMonthlyReport } from '../hooks/useMonthlyReports'
+import { useAccounts } from '../hooks/useAccounts'
 import {
   EmptyState,
   Navbar,
@@ -19,8 +20,22 @@ export const ReportsPage = () => {
   const { state } = useAuth()
   const activeAccountId = state.activeAccountId
 
-  const { report, comparative, loading, error, fetchMonthlyReport, fetchComparative } =
-    useMonthlyReport(activeAccountId ?? 0)
+  const {
+    report,
+    comparative,
+    loading,
+    error,
+    comparativeError,
+    fetchMonthlyReport,
+    fetchComparative,
+  } = useMonthlyReport(activeAccountId ?? 0)
+
+  const { accounts, fetchAccounts } = useAccounts()
+  const activeAccount = accounts.find(a => a.id === state.activeAccountId) ?? accounts[0] ?? null
+
+  useEffect(() => {
+    fetchAccounts()
+  }, [fetchAccounts])
 
   useEffect(() => {
     if (!activeAccountId) return
@@ -59,7 +74,9 @@ export const ReportsPage = () => {
         {/* Header */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Reportes</h2>
-          <p className="text-gray-600">Análisis detallado de tus gastos</p>
+          <p className="text-gray-600">
+            Análisis detallado de tus gastos en la cuenta <strong>{activeAccount?.name}</strong>
+          </p>
         </div>
 
         <div className="mb-8 bg-white p-6 rounded-lg shadow">
@@ -127,6 +144,9 @@ export const ReportsPage = () => {
             </div>
 
             {/* Comparative */}
+            {comparativeError && (
+              <div className="bg-red-100 text-red-700 p-4 rounded-lg mb-6">{comparativeError}</div>
+            )}
             {comparative && (
               <div className="mb-8">
                 <ComparativeChart
@@ -136,9 +156,9 @@ export const ReportsPage = () => {
                   previousMonth={comparative.previousMonth.month}
                   previousYear={comparative.previousMonth.year}
                   previousTotal={comparative.previousMonth.total}
-                  difference={comparative.comparasion.difference}
-                  percentageChange={comparative.comparasion.changePercentaje}
-                  trend={comparative.comparasion.trend}
+                  difference={comparative.comparasion?.difference ?? 0}
+                  percentageChange={comparative.comparasion?.changePercentaje ?? 0}
+                  trend={comparative.comparasion?.trend ?? 'SAME'}
                 />
               </div>
             )}
