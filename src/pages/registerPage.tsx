@@ -94,13 +94,9 @@ export const RegisterPage = () => {
 
       const response = await authService.register(body)
 
-      // routes to loguin and update the email state
+      // routes to login for sign in
       if (response.success) {
-        navigate(ROUTES.REGISTER, {
-          state: {
-            email: formData.email,
-          },
-        })
+        navigate(ROUTES.LOGIN)
       } else {
         setError(response.message || ERROR_MESSAGES.REGISTER_ERROR)
       }
@@ -142,7 +138,6 @@ export const RegisterPage = () => {
               onChange={handleChange}
               placeholder="Nombre"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
             />
           </div>
 
@@ -159,7 +154,6 @@ export const RegisterPage = () => {
               onChange={handleChange}
               placeholder="Apellido"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
             />
           </div>
 
@@ -176,7 +170,6 @@ export const RegisterPage = () => {
               onChange={handleChange}
               placeholder="ejemplo@email.com"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
             />
           </div>
 
@@ -193,7 +186,6 @@ export const RegisterPage = () => {
               onChange={handleChange}
               placeholder="Contraseña"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
             />
           </div>
 
@@ -210,7 +202,6 @@ export const RegisterPage = () => {
               onChange={handleChange}
               placeholder="Confirmar Contraseña"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
             />
           </div>
 
