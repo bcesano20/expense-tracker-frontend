@@ -9,7 +9,7 @@ export const BACKEND_API_ENDPOINTS = {
   GET_MONTHLY_REPORT: 'reports/monthly',
   GET_CATEGORIES_REPORT: 'reports/category',
   GET_CARDS_REPORT: 'reports/cards',
-  GET_COMPARISON_REPORT: 'repotrs/comparison',
+  GET_COMPARISON_REPORT: 'reports/comparison',
 
   // ACCOUNTS
   ACCOUNTS: '/accounts',

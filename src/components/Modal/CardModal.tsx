@@ -11,13 +11,13 @@ interface CardModalProps {
   loading?: boolean
 }
 
-const DEFAULT_CARD_DATA: CardFormInterface = {
+const DEFAULT_CARD_DATA: Partial<CardFormInterface> = {
   name: '',
   bank: '',
   type: 'debit',
   network: 'visa',
   closeDay: 25,
-  balance: 0,
+  balance: undefined,
   accountId: 0,
 }
 
@@ -55,7 +55,7 @@ export const CardModal = ({ isOpen, card, onClose, onSubmit, loading = false }: 
       newErrors.closeDay = ERROR_MESSAGES.CLOSE_DATE_LIMIT_ERROR
     }
 
-    if (formData.type === 'debit' && (!formData.balance || formData.balance < 0)) {
+    if (formData.type === 'debit' && (formData.balance === undefined || formData.balance < 0)) {
       newErrors.balance = ERROR_MESSAGES.BALANCE_ERROR
     }
 
@@ -67,9 +67,10 @@ export const CardModal = ({ isOpen, card, onClose, onSubmit, loading = false }: 
     const { name, value } = e.target
 
     if (name === 'closeDay' || name === 'balance') {
+      const parsed = name === 'balance' ? parseFloat(value) : parseInt(value)
       setFormData(prev => ({
         ...prev,
-        [name]: parseInt(value) || (name === 'balance' ? 0 : 25),
+        [name]: value === '' ? undefined : isNaN(parsed) ? undefined : parsed,
       }))
     } else {
       setFormData(prev => ({
@@ -207,10 +208,9 @@ export const CardModal = ({ isOpen, card, onClose, onSubmit, loading = false }: 
               <input
                 type="number"
                 name="balance"
-                value={formData.balance || 0}
+                value={formData.balance ?? ''}
                 onChange={handleChange}
-                min="0"
-                step="0.01"
+                placeholder="0.00"
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                   errors.balance
                     ? 'border-red-500 focus:ring-red-500'

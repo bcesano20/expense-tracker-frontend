@@ -62,16 +62,17 @@ export const DashboardPage = () => {
         )}
 
         {/* Error State — no account or API failure */}
-        {error && !loading && (
-          <div className="card">
-            <EmptyState
-              icon="🏦"
-              title="No se encontró una cuenta"
-              description="Parece que aún no tienes una cuenta configurada. Crea una para empezar a registrar tus gastos."
-              action={{ label: 'Crear cuenta', onClick: () => navigate(ROUTES.ACCOUNTS) }}
-            />
-          </div>
-        )}
+        {(error && !loading) ||
+          (!state.activeAccountId && (
+            <div className="card">
+              <EmptyState
+                icon="🏦"
+                title="No se encontró una cuenta"
+                description="Parece que aún no tienes una cuenta configurada. Crea una para empezar a registrar tus gastos."
+                action={{ label: 'Crear cuenta', onClick: () => navigate(ROUTES.ACCOUNTS) }}
+              />
+            </div>
+          ))}
 
         {/* Stats Cards */}
         {data && !loading && (
@@ -147,25 +148,27 @@ export const DashboardPage = () => {
         )}
 
         {/* Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
-          <Link
-            linkTo={ROUTES.EXPENSES}
-            className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition border-l-4 border-blue-500"
-          >
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Mis Gastos</h3>
-            <p className="text-gray-600 text-sm">Ver, crear, editar y eliminar gastos del mes</p>
-          </Link>
+        {state.activeAccountId && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
+            <Link
+              linkTo={ROUTES.EXPENSES}
+              className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition border-l-4 border-blue-500"
+            >
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Mis Gastos</h3>
+              <p className="text-gray-600 text-sm">Ver, crear, editar y eliminar gastos del mes</p>
+            </Link>
 
-          <Link
-            linkTo={ROUTES.REPORTS}
-            className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition border-l-4 border-purple-500"
-          >
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Reportes</h3>
-            <p className="text-gray-600 text-sm">
-              Ver análisis detallados y gráficos de tus gastos
-            </p>
-          </Link>
-        </div>
+            <Link
+              linkTo={ROUTES.REPORTS}
+              className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition border-l-4 border-purple-500"
+            >
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Reportes</h3>
+              <p className="text-gray-600 text-sm">
+                Ver análisis detallados y gráficos de tus gastos
+              </p>
+            </Link>
+          </div>
+        )}
 
         {/* Info Card — only shown when there is data */}
         {data && hasNoExpenses && (

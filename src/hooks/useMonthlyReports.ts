@@ -9,8 +9,8 @@ export const useMonthlyReport = (accountId: number) => {
   const [comparative, setComparative] = useState<ComparasionDataInterface | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+  const [comparativeError, setComparativeError] = useState<string | null>(null)
 
-  // Get the monthly report
   const fetchMonthlyReport = useCallback(
     async (month: number, year: number) => {
       try {
@@ -18,10 +18,8 @@ export const useMonthlyReport = (accountId: number) => {
         setError(null)
         const data = await reportsService.getMonthlyReport(accountId, month, year)
         setReport(data ?? null)
-      } catch (err) {
+      } catch {
         setError(ERROR_MESSAGES.MONTHLY_REPORT_ERROR)
-        // eslint-disable-next-line no-console
-        console.error(err)
       } finally {
         setLoading(false)
       }
@@ -29,14 +27,13 @@ export const useMonthlyReport = (accountId: number) => {
     [accountId]
   )
 
-  // Get the comparision or comparative
   const fetchComparative = useCallback(async () => {
     try {
-      setError(null)
+      setComparativeError(null)
       const data = await reportsService.getComparative(accountId)
       setComparative(data ?? null)
     } catch (err) {
-      setError(ERROR_MESSAGES.COMPARISION_ERROR)
+      setComparativeError(ERROR_MESSAGES.COMPARISION_ERROR)
       // eslint-disable-next-line no-console
       console.error(err)
     }
@@ -47,6 +44,7 @@ export const useMonthlyReport = (accountId: number) => {
     comparative,
     loading,
     error,
+    comparativeError,
     fetchMonthlyReport,
     fetchComparative,
   }
