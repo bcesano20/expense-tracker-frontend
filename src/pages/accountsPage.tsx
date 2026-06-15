@@ -249,7 +249,7 @@ export const AccountsPage = () => {
 
       {/* Modales */}
       <AccountModal
-        key={selectedAccount?.id ?? 'new'}
+        key={selectedAccount?.id ?? 'new account'}
         isOpen={showAccountModal}
         account={selectedAccount}
         onClose={() => {
@@ -267,7 +267,7 @@ export const AccountsPage = () => {
       />
 
       <CardModal
-        key={selectedCard?.id ?? 'new'}
+        key={selectedCard?.id ?? 'new card'}
         isOpen={showCardModal}
         card={selectedCard}
         onClose={() => {

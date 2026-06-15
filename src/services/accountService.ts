@@ -20,7 +20,7 @@ export const accountService = {
 
   createAccount: async (data: AccountServiceInterface) => {
     const response = await api.post<ApiResponseInterface<AccountInterface>>(
-      '${BACKEND_API_ENDPOINTS.ACCOUNTS}',
+      `${BACKEND_API_ENDPOINTS.ACCOUNTS}`,
       data
     )
     return response.data.data
