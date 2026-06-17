@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { MONTHS, ROUTES } from '../helpers/constants'
+import { formatDate, getPaymentMethodIcon } from '../helpers/utils'
 import type { ExpenseInterface } from '../types'
 import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
@@ -9,11 +10,18 @@ import { Button, EmptyState, ExpenseModal, MonthSelector, Navbar } from '../comp
 
 const CATEGORIES = ['Comida', 'Entretenimiento', 'Transporte', 'Salud', 'Electrónica', 'Otro']
 
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  cash: 'Efectivo',
+  card: 'Tarjeta',
+  transfer: 'Transferencia',
+  other: 'Otro',
+}
+
 export const ExpensesPage = () => {
   const [month, setMonth] = useState<number>(new Date().getMonth() + 1)
   const [year, setYear] = useState<number>(new Date().getFullYear())
   const [category, setCategory] = useState<string>('')
-  const [search, setSearch] = useState<string>('')
+  const [paymentMethod, setPaymentMethod] = useState<string>('')
   const [selectedExpense, setSelectedExpense] = useState<ExpenseInterface | null>(null)
   const [showForm, setShowForm] = useState<boolean>(false)
 
@@ -37,7 +45,7 @@ export const ExpensesPage = () => {
   const monthName = MONTHS[month - 1]
 
   const filteredExpenses = expenses.filter(expense =>
-    expense.description.toLowerCase().includes(search.toLowerCase())
+    paymentMethod ? expense.paymentMethod === paymentMethod : true
   )
 
   const handleEdit = (expense: ExpenseInterface) => {
@@ -137,15 +145,20 @@ export const ExpensesPage = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Buscar por Descripción
+                Filtrar por Medio de Pago
               </label>
-              <input
-                type="text"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Ej: Supermercado, Netflix..."
+              <select
+                value={paymentMethod}
+                onChange={e => setPaymentMethod(e.target.value)}
                 className="input"
-              />
+              >
+                <option value="">Todos los medios de pago</option>
+                {Object.entries(PAYMENT_METHOD_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
@@ -215,6 +228,7 @@ export const ExpensesPage = () => {
                   <th className="pb-3">Descripción</th>
                   <th className="pb-3">Categoría</th>
                   <th className="pb-3">Fecha</th>
+                  <th className="pb-3">Medio de Pago</th>
                   <th className="pb-3 text-right">Monto</th>
                   <th className="pb-3"></th>
                 </tr>
@@ -224,7 +238,13 @@ export const ExpensesPage = () => {
                   <tr key={expense.id} className="border-b last:border-0 hover:bg-gray-50">
                     <td className="py-3 font-medium text-gray-900">{expense.description}</td>
                     <td className="py-3 text-gray-600">{expense.category}</td>
-                    <td className="py-3 text-gray-600">{expense.date}</td>
+                    <td className="py-3 text-gray-600">{formatDate(expense.date)}</td>
+                    <td className="py-3 text-gray-600">
+                      <span className="flex items-center gap-1">
+                        {getPaymentMethodIcon(expense.paymentMethod)}{' '}
+                        {PAYMENT_METHOD_LABELS[expense.paymentMethod] ?? expense.paymentMethod}
+                      </span>
+                    </td>
                     <td className="py-3 text-right font-semibold text-gray-900">
                       ${expense.amount.toFixed(2)}
                     </td>
@@ -265,19 +285,20 @@ export const ExpensesPage = () => {
               setSelectedExpense(null)
             }}
             onSubmit={async data => {
-              try {
-                if (selectedExpense) {
-                  await updateExpense(selectedExpense.id, data)
-                } else {
-                  await createExpense({
-                    ...data,
-                    accountId: activeAccount.id,
-                  })
-                }
-              } catch (error) {
-                // eslint-disable-next-line no-console
-                console.error('Error:', error)
+              if (selectedExpense) {
+                await updateExpense(selectedExpense.id, data)
+              } else {
+                await createExpense({
+                  ...data,
+                  accountId: activeAccount.id,
+                })
               }
+              fetchExpenses({
+                accountId: activeAccount.id,
+                month,
+                year,
+                category: category || undefined,
+              })
             }}
             loading={loading}
           />
