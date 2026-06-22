@@ -49,6 +49,7 @@ export interface ExpenseInterface {
   amount: number
   date: string
   category: string
+  categoryId?: number
   paymentMethod: string
   billingMonth: number
   billingYear: number
@@ -226,14 +227,29 @@ export interface ComparasionDataInterface {
 
 // EXPENSES INTERFACES
 export interface GetExpenseRequestInterface {
-  accountId?: number //For Get the complete list or just one
+  accountId?: number
   month?: number
   year?: number
-  category?: string
+  categoryId?: number
 }
 
 // ACCOUNTS INTERFACES
 export interface AccountServiceInterface {
   name: string
   currency: string
+}
+
+// CATEGORY INTERFACES
+export interface CategoryInterface {
+  id: number
+  name: string
+  color: string
+  userId: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CategoryFormInterface {
+  name: string
+  color: string
 }
