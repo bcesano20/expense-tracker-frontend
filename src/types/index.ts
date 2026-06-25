@@ -48,7 +48,7 @@ export interface ExpenseInterface {
   description: string
   amount: number
   date: string
-  category: string
+  category: string | CategoryInterface
   categoryId?: number
   paymentMethod: string
   billingMonth: number

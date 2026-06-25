@@ -47,13 +47,16 @@ export const ExpensesTable = ({
       key: 'category',
       label: 'Categoría',
       width: '140px',
-      render: value => (
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(value as string)}`}
-        >
-          {value as string}
-        </span>
-      ),
+      render: value => {
+        const name = typeof value === 'object' && value !== null
+          ? (value as { name: string }).name
+          : (value as string)
+        return (
+          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(name)}`}>
+            {name}
+          </span>
+        )
+      },
     },
     {
       key: 'paymentMethod',
