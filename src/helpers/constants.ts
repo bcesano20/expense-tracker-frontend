@@ -21,6 +21,9 @@ export const BACKEND_API_ENDPOINTS = {
   // CARDS
   GET_CARDS_ACCOUNT: '/cards/account',
   CARDS_API_ENDPOINT: '/cards',
+
+  // CATEGORIES
+  CATEGORIES_API_ENDPOINT: '/categories',
 }
 
 export const ROUTES = {
@@ -64,6 +67,10 @@ export const ERROR_MESSAGES = {
   DELETE_CARD_ERROR: 'Erro al eliminar esta tarjeta',
   CLOSE_DATE_LIMIT_ERROR: 'El día de cierre debe estar entre 1 y 31',
   BALANCE_ERROR: 'El saldo debe ser mayor o igual a 0',
+  CATEGORY_LOAD_ERROR: 'Error al cargar las categorias',
+  CATEGORY_CREATION_ERROR: 'Error al crear la categoria',
+  CATEGORY_UPDATE_ERROR: 'Error al actualizar la categoria',
+  SAVE_CATEGORY_ERROR: 'Error al guardar la categoria. Intenta de nuevo',
 }
 
 export const MONTHS = [

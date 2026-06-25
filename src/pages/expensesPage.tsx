@@ -1,14 +1,21 @@
 import { useEffect, useState } from 'react'
 
 import { MONTHS, ROUTES } from '../helpers/constants'
-import { formatDate, getPaymentMethodIcon } from '../helpers/utils'
-import type { ExpenseInterface } from '../types'
+import type { CategoryInterface, ExpenseInterface } from '../types'
 import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
 import { useExpenses } from '../hooks/useExpenses'
-import { Button, EmptyState, ExpenseModal, MonthSelector, Navbar } from '../components'
-
-const CATEGORIES = ['Comida', 'Entretenimiento', 'Transporte', 'Salud', 'Electrónica', 'Otro']
+import { useCategories } from '../hooks/useCategories'
+import {
+  Button,
+  CategoryModal,
+  EmptyState,
+  ExpenseModal,
+  ExpensesTable,
+  MonthSelector,
+  Navbar,
+  Select,
+} from '../components'
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
   cash: 'Efectivo',
@@ -20,17 +27,27 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
 export const ExpensesPage = () => {
   const [month, setMonth] = useState<number>(new Date().getMonth() + 1)
   const [year, setYear] = useState<number>(new Date().getFullYear())
-  const [category, setCategory] = useState<string>('')
+  const [categoryId, setCategoryId] = useState<number | undefined>(undefined)
   const [paymentMethod, setPaymentMethod] = useState<string>('')
   const [selectedExpense, setSelectedExpense] = useState<ExpenseInterface | null>(null)
   const [showForm, setShowForm] = useState<boolean>(false)
+  const [showCategoryModal, setShowCategoryModal] = useState<boolean>(false)
+  const [selectedCategory, setSelectedCategory] = useState<CategoryInterface | null>(null)
 
   const { state } = useAuth()
   const { accounts, loading: accountsLoading, error: accountsError, fetchAccounts } = useAccounts()
+  const {
+    categories,
+    loading: categoriesLoading,
+    fetchCategories,
+    createCategory,
+    updateCategory,
+  } = useCategories()
 
   useEffect(() => {
     fetchAccounts()
-  }, [fetchAccounts])
+    fetchCategories()
+  }, [fetchAccounts, fetchCategories])
 
   const activeAccount = accounts.find(a => a.id === state.activeAccountId) ?? accounts[0] ?? null
 
@@ -39,8 +56,8 @@ export const ExpensesPage = () => {
 
   useEffect(() => {
     if (!activeAccount) return
-    fetchExpenses({ accountId: activeAccount.id, month, year, category: category || undefined })
-  }, [month, year, category, activeAccount, fetchExpenses])
+    fetchExpenses({ accountId: activeAccount.id, month, year, categoryId })
+  }, [month, year, categoryId, activeAccount, fetchExpenses])
 
   const monthName = MONTHS[month - 1]
 
@@ -125,41 +142,31 @@ export const ExpensesPage = () => {
         {/* Filters */}
         <div className="mb-8 bg-white p-6 rounded-lg shadow">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Filtrar por Categoría
-              </label>
-              <select
-                value={category}
-                onChange={e => setCategory(e.target.value)}
-                className="input"
-              >
-                <option value="">Todas las categorías</option>
-                {CATEGORIES.map(cat => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Select
+              label="Filtrar por Categoría"
+              value={categoryId ?? ''}
+              onChange={e => setCategoryId(e.target.value ? Number(e.target.value) : undefined)}
+            >
+              <option value="">Todas las categorías</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </Select>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Filtrar por Medio de Pago
-              </label>
-              <select
-                value={paymentMethod}
-                onChange={e => setPaymentMethod(e.target.value)}
-                className="input"
-              >
-                <option value="">Todos los medios de pago</option>
-                {Object.entries(PAYMENT_METHOD_LABELS).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Select
+              label="Filtrar por Medio de Pago"
+              value={paymentMethod}
+              onChange={e => setPaymentMethod(e.target.value)}
+            >
+              <option value="">Todos los medios de pago</option>
+              {Object.entries(PAYMENT_METHOD_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </Select>
           </div>
         </div>
 
@@ -203,69 +210,20 @@ export const ExpensesPage = () => {
         {/* Expenses table */}
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Detalle de Gastos</h3>
-
-          {loading && (
-            <div className="bg-blue-100 text-blue-700 p-4 rounded-lg">Cargando gastos...</div>
-          )}
-
-          {error && !loading && (
-            <div className="bg-red-100 text-red-700 p-4 rounded-lg">{error}</div>
-          )}
-
-          {!loading && !error && filteredExpenses.length === 0 && (
+          <ExpensesTable
+            expenses={filteredExpenses}
+            loading={loading}
+            error={error}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+          {!loading && filteredExpenses.length === 0 && !error && (
             <EmptyState
               icon="📭"
               title={`Sin gastos en ${monthName} ${year}`}
               description="No hay gastos registrados para este período."
               action={{ label: 'Agregar gasto', onClick: handleCreateNew }}
             />
-          )}
-
-          {!loading && filteredExpenses.length > 0 && (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-gray-500 border-b">
-                  <th className="pb-3">Descripción</th>
-                  <th className="pb-3">Categoría</th>
-                  <th className="pb-3">Fecha</th>
-                  <th className="pb-3">Medio de Pago</th>
-                  <th className="pb-3 text-right">Monto</th>
-                  <th className="pb-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredExpenses.map(expense => (
-                  <tr key={expense.id} className="border-b last:border-0 hover:bg-gray-50">
-                    <td className="py-3 font-medium text-gray-900">{expense.description}</td>
-                    <td className="py-3 text-gray-600">{expense.category}</td>
-                    <td className="py-3 text-gray-600">{formatDate(expense.date)}</td>
-                    <td className="py-3 text-gray-600">
-                      <span className="flex items-center gap-1">
-                        {getPaymentMethodIcon(expense.paymentMethod)}{' '}
-                        {PAYMENT_METHOD_LABELS[expense.paymentMethod] ?? expense.paymentMethod}
-                      </span>
-                    </td>
-                    <td className="py-3 text-right font-semibold text-gray-900">
-                      ${expense.amount.toFixed(2)}
-                    </td>
-                    <td className="py-3 text-right">
-                      <button
-                        onClick={() => handleEdit(expense)}
-                        className="text-blue-600 hover:text-blue-800 mr-3 text-xs"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleDelete(expense.id)}
-                        className="text-red-600 hover:text-red-800 text-xs"
-                      >
-                        Eliminar
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           )}
         </div>
 
@@ -297,12 +255,39 @@ export const ExpensesPage = () => {
                 accountId: activeAccount.id,
                 month,
                 year,
-                category: category || undefined,
+                categoryId,
               })
             }}
             loading={loading}
+            categories={categories}
+            onCreateCategory={() => {
+              setSelectedCategory(null)
+              setShowCategoryModal(true)
+            }}
+            onEditCategory={cat => {
+              setSelectedCategory(cat)
+              setShowCategoryModal(true)
+            }}
           />
         )}
+
+        <CategoryModal
+          key={selectedCategory?.id ?? 'new-category'}
+          isOpen={showCategoryModal}
+          category={selectedCategory}
+          onClose={() => {
+            setShowCategoryModal(false)
+            setSelectedCategory(null)
+          }}
+          onSubmit={async data => {
+            if (selectedCategory) {
+              await updateCategory(selectedCategory.id, data)
+            } else {
+              await createCategory(data)
+            }
+          }}
+          loading={categoriesLoading}
+        />
       </div>
     </div>
   )
