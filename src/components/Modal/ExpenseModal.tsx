@@ -49,9 +49,7 @@ export const ExpenseModal = ({
   )
 
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [selectedCardId, setSelectedCardId] = useState<number | undefined>(
-    expense?.card?.card?.id
-  )
+  const [selectedCardId, setSelectedCardId] = useState<number | undefined>(expense?.card?.card?.id)
   const [installmentsCount, setInstallmentsCount] = useState<number>(
     expense?.installments?.[0]?.totalInstallments ?? 1
   )
