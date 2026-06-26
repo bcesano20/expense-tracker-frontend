@@ -50,6 +50,7 @@ export interface ExpenseInterface {
   date: string
   category: string | CategoryInterface
   categoryId?: number
+  cardId?: number
   paymentMethod: string
   billingMonth: number
   billingYear: number

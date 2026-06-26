@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import type { CategoryInterface, ExpenseInterface } from '../../types'
+import type { CardInterface, CategoryInterface, ExpenseInterface } from '../../types'
 import { Button, Input, Select } from '../index'
 
 interface ExpenseModalProps {
@@ -10,6 +10,7 @@ interface ExpenseModalProps {
   onSubmit: (data: Partial<ExpenseInterface>) => Promise<void>
   loading?: boolean
   categories?: CategoryInterface[]
+  cards?: CardInterface[]
   onCreateCategory?: () => void
   onEditCategory?: (category: CategoryInterface) => void
 }
@@ -21,9 +22,14 @@ export const ExpenseModal = ({
   onSubmit,
   loading = false,
   categories = [],
+  cards = [],
   onCreateCategory,
   onEditCategory,
 }: ExpenseModalProps) => {
+  const normalizedPaymentMethod = expense?.paymentMethod?.startsWith('card')
+    ? 'card'
+    : (expense?.paymentMethod ?? 'cash')
+
   const [formData, setFormData] = useState<Partial<ExpenseInterface>>(
     expense
       ? {
@@ -31,7 +37,7 @@ export const ExpenseModal = ({
           amount: expense.amount,
           date: expense.date,
           categoryId: expense.categoryId,
-          paymentMethod: expense.paymentMethod,
+          paymentMethod: normalizedPaymentMethod,
         }
       : {
           description: '',
@@ -43,8 +49,13 @@ export const ExpenseModal = ({
   )
 
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [installmentsCount, setInstallmentsCount] = useState<number>(1)
-  const [showInstallments, setShowInstallments] = useState<boolean>(false)
+  const [selectedCardId, setSelectedCardId] = useState<number | undefined>(expense?.card?.card?.id)
+  const [installmentsCount, setInstallmentsCount] = useState<number>(
+    expense?.installments?.[0]?.totalInstallments ?? 1
+  )
+
+  const selectedCard = cards.find(c => c.id === selectedCardId) ?? null
+  const showInstallments = formData.paymentMethod === 'card' && selectedCard?.type === 'credit'
 
   const paymentMethods = [
     { value: 'cash', label: '💵 Efectivo' },
@@ -68,6 +79,17 @@ export const ExpenseModal = ({
     if (!formData.categoryId) {
       newErrors.category = 'La categoría es requerida'
     }
+    if (formData.paymentMethod === 'card' && !selectedCardId) {
+      newErrors.card = 'Seleccioná una tarjeta'
+    }
+    if (
+      selectedCard?.type === 'debit' &&
+      selectedCard.balance !== undefined &&
+      formData.amount !== undefined &&
+      formData.amount > selectedCard.balance
+    ) {
+      newErrors.amount = `El monto supera el saldo disponible ($${selectedCard.balance.toFixed(2)})`
+    }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -86,9 +108,8 @@ export const ExpenseModal = ({
   }
 
   const handlePaymentMethodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const method = e.target.value
-    setFormData(prev => ({ ...prev, paymentMethod: method }))
-    setShowInstallments(method === 'card')
+    setFormData(prev => ({ ...prev, paymentMethod: e.target.value }))
+    setSelectedCardId(undefined)
   }
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -97,12 +118,11 @@ export const ExpenseModal = ({
     if (!validateForm()) return
 
     try {
-      const dataToSubmit = {
+      await onSubmit({
         ...formData,
+        cardId: selectedCardId,
         ...(showInstallments && { totalInstallments: installmentsCount }),
-      }
-
-      await onSubmit(dataToSubmit)
+      })
       onClose()
     } catch {
       setErrors({ submit: 'Error al guardar el gasto. Intenta de nuevo.' })
@@ -171,6 +191,7 @@ export const ExpenseModal = ({
               setFormData(prev => ({ ...prev, categoryId: id }))
               if (errors.category) setErrors(prev => ({ ...prev, category: '' }))
             }}
+            error={errors.category}
             labelActions={
               <div className="flex gap-1">
                 {onCreateCategory && (
@@ -224,6 +245,33 @@ export const ExpenseModal = ({
               </option>
             ))}
           </Select>
+
+          {formData.paymentMethod === 'card' && (
+            <div className="space-y-1">
+              <Select
+                label="Tarjeta *"
+                value={selectedCardId ? String(selectedCardId) : ''}
+                onChange={e => {
+                  const id = e.target.value ? Number(e.target.value) : undefined
+                  setSelectedCardId(id)
+                  if (errors.card) setErrors(prev => ({ ...prev, card: '' }))
+                }}
+                error={errors.card}
+              >
+                <option value="">Seleccioná una tarjeta</option>
+                {cards.map(card => (
+                  <option key={card.id} value={String(card.id)}>
+                    {card.name} — {card.bank} ({card.type === 'credit' ? 'Crédito' : 'Débito'})
+                  </option>
+                ))}
+              </Select>
+              {selectedCard?.type === 'debit' && selectedCard.balance !== undefined && (
+                <p className="text-xs text-gray-500">
+                  Saldo disponible: ${selectedCard.balance.toFixed(2)}
+                </p>
+              )}
+            </div>
+          )}
 
           {showInstallments && (
             <>

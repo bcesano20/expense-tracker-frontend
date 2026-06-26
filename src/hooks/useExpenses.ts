@@ -50,8 +50,6 @@ export const useExpenses = (_accountId: number) => {
       return newExpense
     } catch (err) {
       setError(ERROR_MESSAGES.CREATE_EXPENSE_ERROR)
-      // eslint-disable-next-line no-console
-      console.error(err)
       throw err
     } finally {
       setLoading(false)

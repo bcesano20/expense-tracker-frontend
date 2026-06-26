@@ -9,7 +9,7 @@ export const expensesService = {
       accountId: data.accountId,
       month: data.month,
       year: data.year,
-      categoryId: data.categoryId,
+      category: data.categoryId,
     }
 
     const response = await api.get<ApiResponseInterface<ExpenseInterface[]>>(
