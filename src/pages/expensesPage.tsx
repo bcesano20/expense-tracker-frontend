@@ -4,6 +4,7 @@ import { MONTHS, ROUTES } from '../helpers/constants'
 import type { CategoryInterface, ExpenseInterface } from '../types'
 import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
+import { useCards } from '../hooks/useCards'
 import { useExpenses } from '../hooks/useExpenses'
 import { useCategories } from '../hooks/useCategories'
 import {
@@ -19,7 +20,8 @@ import {
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
   cash: 'Efectivo',
-  card: 'Tarjeta',
+  'card-credit': 'Crédito',
+  'card-debit': 'Débito',
   transfer: 'Transferencia',
   other: 'Otro',
 }
@@ -54,16 +56,29 @@ export const ExpensesPage = () => {
   const { expenses, loading, error, fetchExpenses, deleteExpense, createExpense, updateExpense } =
     useExpenses(activeAccount?.id ?? 0)
 
+  const { cards, fetchCards } = useCards(activeAccount?.id ?? 0)
+
   useEffect(() => {
     if (!activeAccount) return
     fetchExpenses({ accountId: activeAccount.id, month, year, categoryId })
   }, [month, year, categoryId, activeAccount, fetchExpenses])
 
+  useEffect(() => {
+    if (activeAccount?.id) fetchCards()
+  }, [activeAccount, fetchCards])
+
   const monthName = MONTHS[month - 1]
 
-  const filteredExpenses = expenses.filter(expense =>
-    paymentMethod ? expense.paymentMethod === paymentMethod : true
-  )
+  const filteredExpenses = expenses.filter(expense => {
+    if (!paymentMethod) return true
+    if (paymentMethod === 'card-credit') {
+      return expense.paymentMethod.startsWith('card') && expense.card?.card?.type === 'credit'
+    }
+    if (paymentMethod === 'card-debit') {
+      return expense.paymentMethod.startsWith('card') && expense.card?.card?.type === 'debit'
+    }
+    return expense.paymentMethod === paymentMethod
+  })
 
   const handleEdit = (expense: ExpenseInterface) => {
     setSelectedExpense(expense)
@@ -251,7 +266,7 @@ export const ExpensesPage = () => {
                   accountId: activeAccount.id,
                 })
               }
-              fetchExpenses({
+              await fetchExpenses({
                 accountId: activeAccount.id,
                 month,
                 year,
@@ -260,6 +275,7 @@ export const ExpensesPage = () => {
             }}
             loading={loading}
             categories={categories}
+            cards={cards}
             onCreateCategory={() => {
               setSelectedCategory(null)
               setShowCategoryModal(true)
