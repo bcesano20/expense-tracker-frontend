@@ -27,7 +27,7 @@ export const ExpensesTable = ({
     {
       key: 'date',
       label: 'Fecha',
-      width: '100px',
+      width: '200px',
       render: value => formatDate(value as string),
     },
     {
@@ -63,12 +63,45 @@ export const ExpensesTable = ({
       key: 'paymentMethod',
       label: 'Medio de Pago',
       width: '140px',
-      render: value => (
-        <div className="flex items-center gap-2">
-          <span>{getPaymentMethodIcon(value as string)}</span>
-          <span className="capitalize">{value === 'card' ? 'Tarjeta' : (value as string)}</span>
-        </div>
-      ),
+      render: (value, row) => {
+        const method = value as string
+        const isCard = method.startsWith('card')
+        const cardType = row.card?.card?.type
+        const LABELS: Record<string, string> = {
+          cash: 'Efectivo',
+          transfer: 'Transferencia',
+          other: 'Otro',
+        }
+        let label: string
+        if (isCard) {
+          label = cardType === 'credit' ? 'Crédito' : cardType === 'debit' ? 'Débito' : 'Tarjeta'
+        } else {
+          label = LABELS[method] ?? method
+        }
+        return (
+          <div className="flex items-center gap-2">
+            <span>{getPaymentMethodIcon(isCard ? 'card' : method)}</span>
+            <span>{label}</span>
+          </div>
+        )
+      },
+    },
+    {
+      key: 'installments',
+      label: 'Observaciones',
+      width: '160px',
+      render: (_, row) => {
+        const installments = row.installments
+        if (!installments || installments.length === 0 || installments[0].totalInstallments <= 1) {
+          return <span className="text-gray-400">—</span>
+        }
+        const { installmentNumber, totalInstallments, installmentAmount } = installments[0]
+        return (
+          <span className="text-sm text-gray-700">
+            Cuota {installmentNumber}/{totalInstallments} · ${installmentAmount.toFixed(2)}
+          </span>
+        )
+      },
     },
   ]
 
@@ -81,7 +114,7 @@ export const ExpensesTable = ({
           className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition text-sm font-medium"
           title="Editar"
         >
-          ✏️ Editar
+          ✏️
         </button>
       )}
       {onDelete && (
@@ -94,7 +127,7 @@ export const ExpensesTable = ({
           className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition text-sm font-medium"
           title="Eliminar"
         >
-          🗑️ Eliminar
+          🗑️
         </button>
       )}
     </>
