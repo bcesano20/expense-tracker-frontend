@@ -65,7 +65,7 @@ export const LoginPage = () => {
       }
 
       login({ user: response.data, token: response.token })
-      navigate(ROUTES.DASHBOARD)
+      navigate(ROUTES.ACCOUNTS)
     } catch (err) {
       if (axios.isAxiosError<{ message: string }>(err)) {
         setError(err.response?.data?.message || ERROR_MESSAGES.LOGIN_ERROR)
