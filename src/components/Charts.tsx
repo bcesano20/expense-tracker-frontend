@@ -72,17 +72,26 @@ export const PaymentMethodBarChart = ({
   data,
   title = 'Gastos por Medio de Pago',
 }: BarChartProps) => {
-  const chartData = data.map(item => ({
-    name:
-      item.method === 'card'
-        ? 'Tarjeta'
-        : item.method === 'cash'
-          ? 'Efectivo'
-          : item.method === 'transfer'
-            ? 'Transferencia'
-            : 'Otro',
-    total: item.total,
-    count: item.count,
+  const METHOD_LABELS: Record<string, string> = {
+    cash: 'Efectivo',
+    transfer: 'Transferencia',
+    other: 'Otro',
+  }
+
+  const grouped = data.reduce<Record<string, { total: number; count: number }>>((acc, item) => {
+    const label = item.method.startsWith('card')
+      ? 'Tarjeta'
+      : (METHOD_LABELS[item.method] ?? 'Otro')
+    if (!acc[label]) acc[label] = { total: 0, count: 0 }
+    acc[label].total += item.total
+    acc[label].count += item.count
+    return acc
+  }, {})
+
+  const chartData = Object.entries(grouped).map(([name, values]) => ({
+    name,
+    total: values.total,
+    count: values.count,
   }))
 
   return (

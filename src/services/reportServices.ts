@@ -43,9 +43,9 @@ export const reportsService = {
   },
 
   // Comparison with the previous month
-  getComparative: async (accountId: number) => {
+  getComparative: async (accountId: number, month: number, year: number) => {
     const response = await api.get<ApiResponseInterface<ComparasionDataInterface>>(
-      `${BACKEND_API_ENDPOINTS.GET_COMPARISON_REPORT}?accountId=${accountId}`
+      `${BACKEND_API_ENDPOINTS.GET_COMPARISON_REPORT}?accountId=${accountId}&month=${month}&year=${year}`
     )
     return response.data.data
   },

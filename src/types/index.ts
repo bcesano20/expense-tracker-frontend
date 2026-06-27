@@ -166,7 +166,7 @@ export interface InstallmentDetailInterface {
   id: number
   expenseDescription: string
   expenseAmount: number
-  installment: string // "1/3", "2/3", etc
+  installmentProgress: string
   amount: number
 }
 
@@ -176,10 +176,10 @@ export interface CardToPayInterface {
   cardBank: string
   cardType: 'credit' | 'debit'
   network: string
-  currentBalnce?: number // only debit
-  totalToPay: number
+  currentBalnce?: number
+  totalDue: number
   installmentsCount: number
-  installmentDetails: InstallmentDetailInterface[]
+  installments: InstallmentDetailInterface[]
 }
 
 export interface MonthlyReportDataInterface {
@@ -216,14 +216,14 @@ interface MonthInterface {
 
 interface ComparasionInterface {
   difference: number
-  changePercentaje: number
+  changePercentage: number
   trend: 'INCREASE' | 'DECREASE' | 'SAME'
 }
 
 export interface ComparasionDataInterface {
   currentMonth: MonthInterface
   previousMonth: MonthInterface
-  comparasion: ComparasionInterface
+  comparison: ComparasionInterface
 }
 
 // EXPENSES INTERFACES
