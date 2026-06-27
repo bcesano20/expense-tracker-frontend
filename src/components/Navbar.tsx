@@ -24,9 +24,6 @@ export const Navbar = () => {
         {/* Desktop nav — hidden below 900px */}
         <div className="hidden min-[900px]:flex gap-4 items-center">
           <nav className="flex gap-6">
-            <Link linkTo={ROUTES.DASHBOARD} className="text-gray-700 hover:text-blue-600">
-              Tablero
-            </Link>
             <Link linkTo={ROUTES.EXPENSES} className="text-gray-700 hover:text-blue-600">
               Gastos
             </Link>

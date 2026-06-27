@@ -28,7 +28,6 @@ export const BACKEND_API_ENDPOINTS = {
 
 export const ROUTES = {
   LANDING: '/',
-  DASHBOARD: '/dashboard',
   REGISTER: '/register',
   LOGIN: '/login',
   EXPENSES: '/expenses',

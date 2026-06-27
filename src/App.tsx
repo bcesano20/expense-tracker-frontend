@@ -10,9 +10,6 @@ const LoginPage = lazy(() => import('./pages/loginPage').then(m => ({ default: m
 const RegisterPage = lazy(() =>
   import('./pages/registerPage').then(m => ({ default: m.RegisterPage }))
 )
-const DashboardPage = lazy(() =>
-  import('./pages/dashboardPage').then(m => ({ default: m.DashboardPage }))
-)
 const ExpensesPage = lazy(() =>
   import('./pages/expensesPage').then(m => ({ default: m.ExpensesPage }))
 )
@@ -77,19 +74,11 @@ function AppContent() {
       <Routes>
         <Route
           path={ROUTES.LOGIN}
-          element={state.isAuthenticated ? <Navigate to={ROUTES.DASHBOARD} /> : <LoginPage />}
+          element={state.isAuthenticated ? <Navigate to={ROUTES.ACCOUNTS} /> : <LoginPage />}
         />
         <Route
           path={ROUTES.REGISTER}
-          element={state.isAuthenticated ? <Navigate to={ROUTES.DASHBOARD} /> : <RegisterPage />}
-        />
-        <Route
-          path={ROUTES.DASHBOARD}
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
+          element={state.isAuthenticated ? <Navigate to={ROUTES.ACCOUNTS} /> : <RegisterPage />}
         />
         <Route
           path={ROUTES.EXPENSES}
@@ -115,7 +104,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
-        <Route path={ROUTES.LANDING} element={<Navigate to={ROUTES.DASHBOARD} />} />
+        <Route path={ROUTES.LANDING} element={<Navigate to={ROUTES.ACCOUNTS} />} />
       </Routes>
     </Suspense>
   )
