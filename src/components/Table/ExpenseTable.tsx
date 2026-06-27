@@ -27,7 +27,7 @@ export const ExpensesTable = ({
     {
       key: 'date',
       label: 'Fecha',
-      width: '200px',
+      width: '150px',
       render: value => formatDate(value as string),
     },
     {

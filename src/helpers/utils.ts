@@ -1,17 +1,10 @@
 export const formatDate = (dateString: string) => {
   const date = new Date(dateString)
-  const datePart = date.toLocaleDateString('es-AR', {
+  return date.toLocaleDateString('es-AR', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
   })
-  const timePart = date.toLocaleTimeString('es-AR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  })
-  return `${datePart} - ${timePart}`
 }
 
 export const formatCurrency = (amount: number) => {

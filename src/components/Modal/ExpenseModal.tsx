@@ -177,6 +177,7 @@ export const ExpenseModal = ({
             label="Fecha *"
             type="date"
             name="date"
+            lang="es"
             value={formData.date || ''}
             onChange={handleChange}
             error={errors.date}
@@ -220,17 +221,14 @@ export const ExpenseModal = ({
               </div>
             }
           >
-            {categories.length === 0 ? (
-              <option value="" disabled>
-                Sin categorías — crea una con el botón +
+            <option value="">
+              {categories.length === 0 ? 'Sin categorías — crea una con el botón +' : 'Seleccioná una categoría'}
+            </option>
+            {categories.map(cat => (
+              <option key={cat.id} value={String(cat.id)}>
+                {cat.name}
               </option>
-            ) : (
-              categories.map(cat => (
-                <option key={cat.id} value={String(cat.id)}>
-                  {cat.name}
-                </option>
-              ))
-            )}
+            ))}
           </Select>
 
           <Select
