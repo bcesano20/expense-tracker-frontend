@@ -134,8 +134,13 @@ export const ReportsPage = () => {
 
             {/* Graphics */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              {report.expensesByCategory.filter(c => c.category && c.category !== 'undefined').length > 0 && (
-                <CategoryPieChart data={report.expensesByCategory.filter(c => c.category && c.category !== 'undefined')} />
+              {report.expensesByCategory.filter(c => c.category && c.category !== 'undefined')
+                .length > 0 && (
+                <CategoryPieChart
+                  data={report.expensesByCategory.filter(
+                    c => c.category && c.category !== 'undefined'
+                  )}
+                />
               )}
 
               {report.expensesByPaymentMethod.length > 0 && (
@@ -170,40 +175,47 @@ export const ReportsPage = () => {
                   Cuotas a Pagar en {monthName}
                 </h3>
                 <div className="space-y-4">
-                  {report.cardsToPay.filter(c => c.cardType === 'credit').map(card => (
-                    <div key={card.cardId} className="border border-gray-200 rounded-lg p-4">
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <h4 className="font-semibold text-gray-900">{card.cardName}</h4>
-                          <p className="text-sm text-gray-600">
-                            {card.cardBank} • {card.cardType === 'credit' ? 'Crédito' : 'Débito'}
+                  {report.cardsToPay
+                    .filter(c => c.cardType === 'credit')
+                    .map(card => (
+                      <div key={card.cardId} className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <h4 className="font-semibold text-gray-900">{card.cardName}</h4>
+                            <p className="text-sm text-gray-600">
+                              {card.cardBank} • {card.cardType === 'credit' ? 'Crédito' : 'Débito'}
+                            </p>
+                          </div>
+                          <p className="text-2xl font-bold text-blue-600">
+                            ${(card.totalDue ?? 0).toFixed(2)}
                           </p>
                         </div>
-                        <p className="text-2xl font-bold text-blue-600">
-                          ${(card.totalDue ?? 0).toFixed(2)}
-                        </p>
-                      </div>
 
-                      {card.installments.length > 0 && (
-                        <div className="bg-gray-50 rounded p-3">
-                          <p className="text-xs font-semibold text-gray-700 mb-2">Cuotas:</p>
-                          <ul className="space-y-1">
-                            {card.installments.map((installment, idx) => (
-                              <li key={idx} className="text-sm text-gray-600 flex justify-between items-center gap-4">
-                                <span className="flex-1">
-                                  {installment.expenseDescription}
-                                  <span className="text-gray-400 text-xs ml-1">({installment.installmentProgress})</span>
-                                </span>
-                                <span className="font-medium shrink-0">
-                                  ${(installment.amount ?? 0).toFixed(2)}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                        {card.installments.length > 0 && (
+                          <div className="bg-gray-50 rounded p-3">
+                            <p className="text-xs font-semibold text-gray-700 mb-2">Cuotas:</p>
+                            <ul className="space-y-1">
+                              {card.installments.map((installment, idx) => (
+                                <li
+                                  key={idx}
+                                  className="text-sm text-gray-600 flex justify-between items-center gap-4"
+                                >
+                                  <span className="flex-1">
+                                    {installment.expenseDescription}
+                                    <span className="text-gray-400 text-xs ml-1">
+                                      ({installment.installmentProgress})
+                                    </span>
+                                  </span>
+                                  <span className="font-medium shrink-0">
+                                    ${(installment.amount ?? 0).toFixed(2)}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                 </div>
               </div>
             )}

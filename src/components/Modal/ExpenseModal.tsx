@@ -222,7 +222,9 @@ export const ExpenseModal = ({
             }
           >
             <option value="">
-              {categories.length === 0 ? 'Sin categorías — crea una con el botón +' : 'Seleccioná una categoría'}
+              {categories.length === 0
+                ? 'Sin categorías — crea una con el botón +'
+                : 'Seleccioná una categoría'}
             </option>
             {categories.map(cat => (
               <option key={cat.id} value={String(cat.id)}>
