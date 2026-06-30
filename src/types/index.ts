@@ -79,6 +79,7 @@ export interface ApiResponseInterface<T> {
   error?: string
   message: string
   token?: string
+  pagination?: PaginationState
 }
 
 export interface AuthStateInterface {
@@ -100,6 +101,25 @@ export interface ColumnInterface<T> {
   label: string
   render?: (value: unknown, row: T) => ReactNode
   width?: string
+}
+
+export interface PaginationState {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+}
+
+export interface PaginatedResponseInterface<T> {
+  data: T[]
+  pagination: PaginationState
+}
+
+export interface PaginatedRequestInterface {
+  page: number
+  limit: number
 }
 
 // AUTH INTERFACES
@@ -232,6 +252,8 @@ export interface GetExpenseRequestInterface {
   month?: number
   year?: number
   categoryId?: number
+  orderBy?: string
+  pagination: PaginatedRequestInterface
 }
 
 // ACCOUNTS INTERFACES

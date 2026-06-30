@@ -1,25 +1,36 @@
 import { useState, useCallback } from 'react'
 
-import type { ExpenseInterface, GetExpenseRequestInterface } from '../types'
+import type { ExpenseInterface, GetExpenseRequestInterface, PaginationState } from '../types'
 import { expensesService } from '../services/expenseServices'
 import { ERROR_MESSAGES } from '../helpers/constants'
+
+const DEFAULT_PAGINATION_STATE: PaginationState = {
+  page: 1,
+  limit: 10,
+  total: 0,
+  totalPages: 0,
+  hasNextPage: false,
+  hasPreviousPage: false,
+}
 
 export const useExpenses = (_accountId: number) => {
   const [expenses, setExpenses] = useState<ExpenseInterface[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
+  const [pagination, setPagination] = useState<PaginationState>(DEFAULT_PAGINATION_STATE)
+
   // Get Expenses with filters (date period and category)
   const fetchExpenses = useCallback(async (request: GetExpenseRequestInterface) => {
     try {
       setLoading(true)
       setError(null)
-      const data = await expensesService.getExpenses(request)
-      setExpenses(data || [])
-    } catch (err) {
+      const response = await expensesService.getExpenses(request)
+
+      setExpenses(response?.data || [])
+      setPagination(response?.pagination ?? DEFAULT_PAGINATION_STATE)
+    } catch {
       setError(ERROR_MESSAGES.EXPENSES_LOAD_ERROR)
-      // eslint-disable-next-line no-console
-      console.error(err)
     } finally {
       setLoading(false)
     }
@@ -67,8 +78,6 @@ export const useExpenses = (_accountId: number) => {
       return updatedExpense
     } catch (err) {
       setError(ERROR_MESSAGES.UPDATE_EXPENSE_ERROR)
-      // eslint-disable-next-line no-console
-      console.error(err)
       throw err
     } finally {
       setLoading(false)
@@ -84,8 +93,6 @@ export const useExpenses = (_accountId: number) => {
       setExpenses(prev => prev.filter(expense => expense.id !== id))
     } catch (err) {
       setError(ERROR_MESSAGES.DELETE_EXPENSE_ERROR)
-      // eslint-disable-next-line no-console
-      console.error(err)
       throw err
     } finally {
       setLoading(false)
@@ -97,6 +104,7 @@ export const useExpenses = (_accountId: number) => {
     expenses,
     loading,
     error,
+    pagination,
 
     // Functions
     fetchExpenses,

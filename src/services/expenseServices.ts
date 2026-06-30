@@ -1,7 +1,11 @@
 import api from './api'
 
 import { BACKEND_API_ENDPOINTS } from '../helpers/constants'
-import type { GetExpenseRequestInterface, ExpenseInterface, ApiResponseInterface } from '../types'
+import type {
+  GetExpenseRequestInterface,
+  ExpenseInterface,
+  ApiResponseInterface,
+} from '../types'
 
 export const expensesService = {
   getExpenses: async (data: GetExpenseRequestInterface) => {
@@ -10,15 +14,19 @@ export const expensesService = {
       month: data.month,
       year: data.year,
       category: data.categoryId,
+      orderBy: data.orderBy,
+      page: data.pagination.page,
+      limit: data.pagination.limit,
     }
 
     const response = await api.get<ApiResponseInterface<ExpenseInterface[]>>(
       BACKEND_API_ENDPOINTS.EXPENSE_BASIC_API_ROUTE,
-      {
-        params: body,
-      }
+      { params: body }
     )
-    return response.data.data
+    return {
+      data: response.data.data ?? [],
+      pagination: response.data.pagination,
+    }
   },
 
   getExpenseById: async (id: number) => {
