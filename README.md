@@ -1,20 +1,60 @@
-# Expense Tracker Frontend
+# SpendWise — Frontend
+
+A personal expense tracker that lets you record expenses, categorize them, track credit/debit card installments, and analyze spending through monthly reports and charts.
+
+## Tech Stack
+
+- **React 19** + **TypeScript 6**
+- **Vite 8** — dev server and bundler
+- **Tailwind CSS 4** — styling
+- **React Router 7** — client-side routing
+- **Recharts** — charts and data visualization
+- **Axios** — HTTP client
+- **ESLint** + **Prettier** — linting and formatting
+
+## Project Structure
+
+```
+src/
+├── components/     # Reusable UI components (Navbar, Footer, Table, Charts, Modals)
+├── config/         # App-wide configuration (branding)
+├── contexts/       # React context providers (auth)
+├── helpers/        # Constants and utility functions
+├── hooks/          # Custom hooks (useExpenses, useAccounts, useMonthlyReports…)
+├── pages/          # Route-level page components
+├── services/       # Axios API calls per domain (expenses, reports, auth…)
+└── types/          # Shared TypeScript interfaces
+```
+
+## Run Locally
+
+```bash
+# Install dependencies
+npm install
+
+# Start the dev server
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`.
 
 ## CI Checks
 
-Before pushing or opening a PR, run these commands locally to ensure the CI pipeline passes:
+The CI pipeline runs on every push and pull request to `main` via GitHub Actions (`.github/workflows/lint.yml`). It runs the following checks in order:
+
+| Step | Command |
+|---|---|
+| Lint | `npm run lint` |
+| Type check | `npx tsc --noEmit` |
+| Format check | `npx prettier --check "src/**/*.{ts,tsx,css}"` |
+| Build | `npm run build` |
+
+Run them locally before opening a PR:
 
 ```bash
-# 1. Check for lint errors
 npm run lint
-
-# 2. Check for TypeScript errors
 npx tsc --noEmit
-
-# 3. Check code formatting
 npx prettier --check "src/**/*.{ts,tsx,css}"
-
-# 4. Verify the build succeeds
 npm run build
 ```
 
@@ -23,80 +63,4 @@ To auto-fix lint and formatting issues:
 ```bash
 npm run lint:fix
 npm run format
-```
-
----
-
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
