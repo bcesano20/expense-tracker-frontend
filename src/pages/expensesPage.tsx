@@ -15,6 +15,7 @@ import {
   ExpensesTable,
   MonthSelector,
   Navbar,
+  Pagination,
   Select,
 } from '../components'
 
@@ -35,6 +36,7 @@ export const ExpensesPage = () => {
   const [showForm, setShowForm] = useState<boolean>(false)
   const [showCategoryModal, setShowCategoryModal] = useState<boolean>(false)
   const [selectedCategory, setSelectedCategory] = useState<CategoryInterface | null>(null)
+  const [page, setPage] = useState<number>(1)
 
   const { state } = useAuth()
   const { accounts, loading: accountsLoading, error: accountsError, fetchAccounts } = useAccounts()
@@ -53,15 +55,29 @@ export const ExpensesPage = () => {
 
   const activeAccount = accounts.find(a => a.id === state.activeAccountId) ?? accounts[0] ?? null
 
-  const { expenses, loading, error, fetchExpenses, deleteExpense, createExpense, updateExpense } =
-    useExpenses(activeAccount?.id ?? 0)
+  const {
+    expenses,
+    loading,
+    error,
+    pagination,
+    fetchExpenses,
+    deleteExpense,
+    createExpense,
+    updateExpense,
+  } = useExpenses(activeAccount?.id ?? 0)
 
   const { cards, fetchCards } = useCards(activeAccount?.id ?? 0)
 
   useEffect(() => {
     if (!activeAccount) return
-    fetchExpenses({ accountId: activeAccount.id, month, year, categoryId })
-  }, [month, year, categoryId, activeAccount, fetchExpenses])
+    fetchExpenses({
+      accountId: activeAccount.id,
+      month,
+      year,
+      categoryId,
+      pagination: { page, limit: 10 },
+    })
+  }, [month, year, categoryId, page, activeAccount, fetchExpenses])
 
   useEffect(() => {
     if (activeAccount?.id) fetchCards()
@@ -79,6 +95,10 @@ export const ExpensesPage = () => {
     }
     return expense.paymentMethod === paymentMethod
   })
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage)
+  }
 
   const handleEdit = (expense: ExpenseInterface) => {
     setSelectedExpense(expense)
@@ -143,24 +163,31 @@ export const ExpensesPage = () => {
             <Button onClick={handleCreateNew}>➕ Crear Gasto</Button>
           </div>
         </div>
-
         {/* Month Selector */}
         <div className="mb-8 bg-white p-6 rounded-lg shadow">
           <MonthSelector
             month={month}
             year={year}
-            onMonthChange={setMonth}
-            onYearChange={setYear}
+            onMonthChange={m => {
+              setMonth(m)
+              setPage(1)
+            }}
+            onYearChange={y => {
+              setYear(y)
+              setPage(1)
+            }}
           />
         </div>
-
         {/* Filters */}
         <div className="mb-8 bg-white p-6 rounded-lg shadow">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Select
               label="Filtrar por Categoría"
               value={categoryId ?? ''}
-              onChange={e => setCategoryId(e.target.value ? Number(e.target.value) : undefined)}
+              onChange={e => {
+                setCategoryId(e.target.value ? Number(e.target.value) : undefined)
+                setPage(1)
+              }}
             >
               <option value="">Todas las categorías</option>
               {categories.map(cat => (
@@ -184,7 +211,6 @@ export const ExpensesPage = () => {
             </Select>
           </div>
         </div>
-
         {/* Quick stats */}
         <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white p-4 rounded-lg shadow">
@@ -242,12 +268,22 @@ export const ExpensesPage = () => {
           )}
         </div>
 
+        {/* Pagination Information */}
+        {filteredExpenses.length > 0 && (
+          <Pagination
+            page={page}
+            totalPages={pagination.totalPages}
+            hasNextPage={pagination.hasNextPage}
+            hasPreviousPage={pagination.hasPreviousPage}
+            onPageChange={handlePageChange}
+            loading={loading}
+          />
+        )}
         {filteredExpenses.length > 0 && (
           <div className="mt-6 text-center text-sm text-gray-500">
-            Mostrando {filteredExpenses.length} de {expenses.length} gastos
+            Mostrando {filteredExpenses.length} de {pagination.total} gastos
           </div>
         )}
-
         {showForm && (
           <ExpenseModal
             key={selectedExpense?.id ?? 'new'}
@@ -271,6 +307,7 @@ export const ExpensesPage = () => {
                 month,
                 year,
                 categoryId,
+                pagination: { page, limit: 10 },
               })
             }}
             loading={loading}
@@ -286,7 +323,6 @@ export const ExpensesPage = () => {
             }}
           />
         )}
-
         <CategoryModal
           key={selectedCategory?.id ?? 'new-category'}
           isOpen={showCategoryModal}
