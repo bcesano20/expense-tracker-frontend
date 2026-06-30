@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '../helpers/constants'
+import { branding } from '../config/branding'
 import { useAuth } from '../hooks/useAuth'
 import { HamburgerMenu } from './HamburgerMenu'
 import { Link } from './Link'
@@ -17,8 +18,19 @@ export const Navbar = () => {
   return (
     <nav className="bg-white shadow">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Registro de Gastos</h1>
+        <div className="flex items-center gap-3">
+          {/* Logo/Icon */}
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+            <img
+              src="/SpendWise-Logo.png"
+              alt={branding.appName}
+              className="w-70 h-full object-contain"
+            />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">{branding.appName}</h1>
+            <p className="text-xs text-gray-500">{branding.tagline}</p>
+          </div>
         </div>
 
         {/* Desktop nav — hidden below 900px */}

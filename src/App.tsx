@@ -5,6 +5,7 @@ import { ROUTES } from './helpers/constants'
 import { useAuth } from './hooks/useAuth'
 import { AuthProvider } from './contexts/authProvider'
 import { accountService } from './services/accountService'
+import { Footer } from './components'
 
 const LoginPage = lazy(() => import('./pages/loginPage').then(m => ({ default: m.LoginPage })))
 const RegisterPage = lazy(() =>
@@ -64,49 +65,52 @@ function AppContent() {
   }, [state.isAuthenticated, state.activeAccountId, setActiveAccount])
 
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-500">
-          Cargando...
-        </div>
-      }
-    >
-      <Routes>
-        <Route
-          path={ROUTES.LOGIN}
-          element={state.isAuthenticated ? <Navigate to={ROUTES.ACCOUNTS} /> : <LoginPage />}
-        />
-        <Route
-          path={ROUTES.REGISTER}
-          element={state.isAuthenticated ? <Navigate to={ROUTES.ACCOUNTS} /> : <RegisterPage />}
-        />
-        <Route
-          path={ROUTES.EXPENSES}
-          element={
-            <ProtectedRoute>
-              <ExpensesPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROUTES.REPORTS}
-          element={
-            <ProtectedRoute>
-              <ReportsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROUTES.ACCOUNTS}
-          element={
-            <ProtectedRoute>
-              <AccountsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path={ROUTES.LANDING} element={<Navigate to={ROUTES.ACCOUNTS} />} />
-      </Routes>
-    </Suspense>
+    <>
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-500">
+            Cargando...
+          </div>
+        }
+      >
+        <Routes>
+          <Route
+            path={ROUTES.LOGIN}
+            element={state.isAuthenticated ? <Navigate to={ROUTES.ACCOUNTS} /> : <LoginPage />}
+          />
+          <Route
+            path={ROUTES.REGISTER}
+            element={state.isAuthenticated ? <Navigate to={ROUTES.ACCOUNTS} /> : <RegisterPage />}
+          />
+          <Route
+            path={ROUTES.EXPENSES}
+            element={
+              <ProtectedRoute>
+                <ExpensesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.REPORTS}
+            element={
+              <ProtectedRoute>
+                <ReportsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.ACCOUNTS}
+            element={
+              <ProtectedRoute>
+                <AccountsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path={ROUTES.LANDING} element={<Navigate to={ROUTES.ACCOUNTS} />} />
+        </Routes>
+      </Suspense>
+      <Footer />
+    </>
   )
 }
 
