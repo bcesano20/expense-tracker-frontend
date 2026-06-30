@@ -1,11 +1,7 @@
 import api from './api'
 
 import { BACKEND_API_ENDPOINTS } from '../helpers/constants'
-import type {
-  GetExpenseRequestInterface,
-  ExpenseInterface,
-  ApiResponseInterface,
-} from '../types'
+import type { GetExpenseRequestInterface, ExpenseInterface, ApiResponseInterface } from '../types'
 
 export const expensesService = {
   getExpenses: async (data: GetExpenseRequestInterface) => {
