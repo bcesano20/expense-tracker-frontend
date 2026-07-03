@@ -20,6 +20,7 @@ const ReportsPage = lazy(() =>
 const AccountsPage = lazy(() =>
   import('./pages/accountsPage').then(m => ({ default: m.AccountsPage }))
 )
+const IncomePage = lazy(() => import('./pages/incomesPage').then(m => ({ default: m.IncomePage })))
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { state } = useAuth()
@@ -103,6 +104,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <AccountsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.INCOMES}
+            element={
+              <ProtectedRoute>
+                <IncomePage />
               </ProtectedRoute>
             }
           />
