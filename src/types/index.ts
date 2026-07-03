@@ -72,6 +72,17 @@ export interface InstallmentInterface {
   paymentYear: number
 }
 
+export interface IncomeInterface {
+  id: number
+  accountId: number
+  description: string
+  amount: number
+  source: string
+  date: string
+  createdAt: string
+  updatedAt: string
+}
+
 // API AND CONTEXT INTERFACES
 export interface ApiResponseInterface<T> {
   success: boolean
@@ -275,4 +286,20 @@ export interface CategoryInterface {
 export interface CategoryFormInterface {
   name: string
   color: string
+}
+
+// INCOME INTERFACES
+export interface GetIncomeRequestInterface {
+  accountId?: number
+  month?: number
+  year?: number
+  pagination: PaginatedRequestInterface
+}
+
+export interface IncomeFormInterface {
+  description: string
+  amount: number
+  source: string
+  date: string
+  accountId: number
 }
