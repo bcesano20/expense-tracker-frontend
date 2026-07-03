@@ -24,6 +24,9 @@ export const BACKEND_API_ENDPOINTS = {
 
   // CATEGORIES
   CATEGORIES_API_ENDPOINT: '/categories',
+
+  // INCOMES
+  INCOMES_API_ENDPOINT: '/incomes',
 }
 
 export const ROUTES = {
@@ -34,6 +37,7 @@ export const ROUTES = {
   REPORTS: '/reports',
   ACCOUNTS: '/accounts',
   CARDS: '/cards',
+  INCOMES: '/incomes',
 }
 
 export const REGEXP = {
@@ -42,6 +46,7 @@ export const REGEXP = {
 
 export const ERROR_MESSAGES = {
   FIELD_REQUIRED: 'Este campo es requerido',
+  MORE_0_FIELD: 'Este campo debe ser mayor a 0.',
   LOGIN_ERROR: 'Error al iniciar sesión',
   EMAIL_FORMAT_INVALID: 'El formato de email no es valido',
   REPORTS_LOAD_ERROR: 'Error al cargar el resumen',
@@ -50,6 +55,11 @@ export const ERROR_MESSAGES = {
   CREATE_EXPENSE_ERROR: 'Error al crear el gasto',
   UPDATE_EXPENSE_ERROR: 'Error al actualizar el gasto',
   DELETE_EXPENSE_ERROR: 'Error al eliminar el gasto',
+  INCOMES_LOAD_ERROR: 'Error al cargar los ingresos',
+  INCOME_GET_ERROR: 'Error al recuperar el ingreso',
+  CREATE_INCOME_ERROR: 'Error al crear el ingreso',
+  UPDATE_INCOME_ERROR: 'Error al actualizar el ingreso',
+  DELETE_INCOME_ERROR: 'Error al eliminar el ingreso',
   PASSWORD_INVALID_ERROR: 'La contraseña debe tener al menos 6 caracteres',
   PASSWORD_NOT_MATCH: 'Las contraseñas no coinciden',
   REGISTER_ERROR: 'Error al registrarse',

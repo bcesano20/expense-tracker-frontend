@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import type { AccountInterface, CardFormInterface, CardInterface } from '../types'
+import { ROUTES } from '../helpers/constants'
 import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCards } from '../hooks/useCards'
-import { Navbar, AccountModal, CardModal } from '../components'
+import { Button, Navbar, AccountModal, CardModal } from '../components'
 
 export const AccountsPage = () => {
   const { state, setActiveAccount } = useAuth()
+  const navigate = useNavigate()
 
   const [selectedAccountId, setSelectedAccountId] = useState<number | null>(null)
   const [showAccountModal, setShowAccountModal] = useState<boolean>(false)
@@ -243,6 +246,23 @@ export const AccountsPage = () => {
                 ))}
               </div>
             )}
+
+            {/* Routes Buttons section */}
+            <div className="flex flex-col md:flex-row gap-4 mt-8">
+              <Button
+                onClick={() => navigate(ROUTES.EXPENSES)}
+                className="flex-1 md:h-25 md:text-2xl"
+              >
+                Gastos de la cuenta
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => navigate(ROUTES.INCOMES)}
+                className="flex-1 md:h-25 md:text-2xl"
+              >
+                Ingresos de la cuenta
+              </Button>
+            </div>
           </div>
         )}
       </div>
