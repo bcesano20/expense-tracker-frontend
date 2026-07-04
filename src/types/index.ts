@@ -83,6 +83,20 @@ export interface IncomeInterface {
   updatedAt: string
 }
 
+export interface BudgetInterface {
+  id: number
+  accountId: number
+  categoryId: number
+  category?: CategoryInterface
+  month: number
+  year: number
+  amount?: number
+  minAmount?: number
+  maxAmount?: number
+  createdAt: string
+  updatedAt: string
+}
+
 // API AND CONTEXT INTERFACES
 export interface ApiResponseInterface<T> {
   success: boolean
@@ -302,4 +316,22 @@ export interface IncomeFormInterface {
   source: string
   date: string
   accountId: number
+}
+
+// BUDGET INTERFACES
+export interface GetBudgetRequestInterface {
+  accountId: number
+  month: number
+  year: number
+  categoryId?: number
+}
+
+export interface BudgetFormInterface {
+  accountId: number
+  categoryId: number
+  month: number
+  year: number
+  amount?: number
+  minAmount?: number
+  maxAmount?: number
 }

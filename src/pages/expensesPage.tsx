@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
 
 import { MONTHS, ROUTES } from '../helpers/constants'
-import type { CategoryInterface, ExpenseInterface } from '../types'
+import type { BudgetInterface, CategoryInterface, ExpenseInterface } from '../types'
 import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCards } from '../hooks/useCards'
 import { useExpenses } from '../hooks/useExpenses'
 import { useCategories } from '../hooks/useCategories'
+import { useBudgets } from '../hooks/useBudgets'
 import {
   Button,
+  BudgetModal,
+  BudgetsListModal,
   CategoryModal,
   EmptyState,
   ExpenseModal,
@@ -36,6 +39,9 @@ export const ExpensesPage = () => {
   const [showForm, setShowForm] = useState<boolean>(false)
   const [showCategoryModal, setShowCategoryModal] = useState<boolean>(false)
   const [selectedCategory, setSelectedCategory] = useState<CategoryInterface | null>(null)
+  const [showBudgetModal, setShowBudgetModal] = useState<boolean>(false)
+  const [selectedBudget, setSelectedBudget] = useState<BudgetInterface | null>(null)
+  const [showBudgetsListModal, setShowBudgetsListModal] = useState<boolean>(false)
   const [page, setPage] = useState<number>(1)
 
   const { state } = useAuth()
@@ -67,6 +73,20 @@ export const ExpensesPage = () => {
   } = useExpenses(activeAccount?.id ?? 0)
 
   const { cards, fetchCards } = useCards(activeAccount?.id ?? 0)
+
+  const {
+    budgets,
+    loading: budgetsLoading,
+    fetchBudgets,
+    createBudget,
+    updateBudget,
+    deleteBudget,
+  } = useBudgets(activeAccount?.id ?? 0)
+
+  useEffect(() => {
+    if (!activeAccount || !showBudgetsListModal) return
+    fetchBudgets({ accountId: activeAccount.id, month, year })
+  }, [showBudgetsListModal, month, year, activeAccount, fetchBudgets])
 
   useEffect(() => {
     if (!activeAccount) return
@@ -164,7 +184,7 @@ export const ExpensesPage = () => {
           </div>
         </div>
         {/* Month Selector */}
-        <div className="mb-8 bg-white p-6 rounded-lg shadow">
+        <div className="mb-8 bg-white p-6 rounded-lg shadow flex items-center justify-between gap-4">
           <MonthSelector
             month={month}
             year={year}
@@ -177,6 +197,14 @@ export const ExpensesPage = () => {
               setPage(1)
             }}
           />
+          <div className="flex gap-2 shrink-0">
+            <Button variant="secondary" onClick={() => setShowBudgetModal(true)}>
+              + Presupuesto
+            </Button>
+            <Button variant="secondary" onClick={() => setShowBudgetsListModal(true)}>
+              Ver Presupuestos
+            </Button>
+          </div>
         </div>
         {/* Filters */}
         <div className="mb-8 bg-white p-6 rounded-lg shadow">
@@ -323,6 +351,53 @@ export const ExpensesPage = () => {
             }}
           />
         )}
+        {showBudgetModal && activeAccount && (
+          <BudgetModal
+            key={selectedBudget?.id ?? 'new-budget'}
+            isOpen={showBudgetModal}
+            budget={selectedBudget}
+            month={month}
+            year={year}
+            accountId={activeAccount.id}
+            onClose={() => {
+              setShowBudgetModal(false)
+              setSelectedBudget(null)
+            }}
+            onSubmit={async data => {
+              if (selectedBudget) {
+                await updateBudget(selectedBudget.id, data)
+              } else {
+                await createBudget(data)
+              }
+            }}
+            loading={budgetsLoading}
+            categories={categories}
+            onCreateCategory={() => {
+              setSelectedCategory(null)
+              setShowCategoryModal(true)
+            }}
+            onEditCategory={cat => {
+              setSelectedCategory(cat)
+              setShowCategoryModal(true)
+            }}
+          />
+        )}
+        <BudgetsListModal
+          isOpen={showBudgetsListModal}
+          budgets={budgets}
+          loading={budgetsLoading}
+          month={month}
+          year={year}
+          onClose={() => setShowBudgetsListModal(false)}
+          onDelete={async id => {
+            await deleteBudget(id)
+          }}
+          onEdit={budget => {
+            setSelectedBudget(budget)
+            setShowBudgetsListModal(false)
+            setShowBudgetModal(true)
+          }}
+        />
         <CategoryModal
           key={selectedCategory?.id ?? 'new-category'}
           isOpen={showCategoryModal}
