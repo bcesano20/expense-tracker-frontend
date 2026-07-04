@@ -27,6 +27,9 @@ export const BACKEND_API_ENDPOINTS = {
 
   // INCOMES
   INCOMES_API_ENDPOINT: '/incomes',
+
+  //BUDGETS
+  BUDGETS_API_ENDPOINT: '/budgets',
 }
 
 export const ROUTES = {
@@ -80,6 +83,11 @@ export const ERROR_MESSAGES = {
   CATEGORY_CREATION_ERROR: 'Error al crear la categoria',
   CATEGORY_UPDATE_ERROR: 'Error al actualizar la categoria',
   SAVE_CATEGORY_ERROR: 'Error al guardar la categoria. Intenta de nuevo',
+  BUDGETS_LOAD_ERROR: 'Error al cargar los presupuestos',
+  BUDGET_GET_ERROR: 'Error al recuperar el presupuesto',
+  CREATE_BUDGET_ERROR: 'Error al crear el presupuesto',
+  UPDATE_BUDGET_ERROR: 'Error al actualizar el presupuesto',
+  DELETE_BUDGET_ERROR: 'Error al eliminar el presupuesto',
 }
 
 export const MONTHS = [
