@@ -237,6 +237,48 @@ export interface MonthlyReportDataInterface {
   totalCardPayments: number
 }
 
+// For budget status report
+export type BudgetStatus = 'UNDER_BUDGET' | 'OVER_BUDGET' | 'WITHIN_RANGE' | 'NO_BUDGET'
+
+export interface BudgetStatusDetailInterface {
+  type: 'fixed' | 'range'
+  budgetAmount?: number
+  minAmount?: number
+  maxAmount?: number
+  remaining: number
+  usagePercentage: number
+}
+
+export interface AccountPeriodRequestInterface {
+  accountId: number
+  month: number
+  year: number
+  categoryId?: number
+}
+
+export interface BudgetStatusReportInterface {
+  period: PeriodInterface
+  category: Pick<CategoryInterface, 'id' | 'name' | 'color'>
+  totalSpent: number
+  expenseCount: number
+  budget: BudgetStatusDetailInterface
+  status: BudgetStatus
+}
+
+// For income ratio report
+export type IncomeRatioStatus = 'SURPLUS' | 'DEFICIT' | 'BALANCED'
+
+export interface IncomeRatioReportInterface {
+  period: Pick<PeriodInterface, 'month' | 'year'>
+  totalIncome: number
+  totalExpenses: number
+  balance: number
+  expensePercentage: number
+  incomeCount: number
+  expenseCount: number
+  status: IncomeRatioStatus
+}
+
 // For analitics by category
 export interface CategoryAnalysisInterface {
   category: string

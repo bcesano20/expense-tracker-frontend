@@ -4,6 +4,8 @@ import { MONTHS, ROUTES } from '../helpers/constants'
 import { useAuth } from '../hooks/useAuth'
 import { useMonthlyReport } from '../hooks/useMonthlyReports'
 import { useAccounts } from '../hooks/useAccounts'
+import { useCategories } from '../hooks/useCategories'
+import { useReports } from '../hooks/useReports'
 import {
   EmptyState,
   Navbar,
@@ -11,11 +13,15 @@ import {
   CategoryPieChart,
   PaymentMethodBarChart,
   ComparativeChart,
+  Select,
+  BudgetStatusCard,
+  IncomeRatioCard,
 } from '../components'
 
 export const ReportsPage = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1)
   const [year, setYear] = useState(new Date().getFullYear())
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined)
 
   const { state } = useAuth()
   const activeAccountId = state.activeAccountId
@@ -33,15 +39,31 @@ export const ReportsPage = () => {
   const { accounts, fetchAccounts } = useAccounts()
   const activeAccount = accounts.find(a => a.id === state.activeAccountId) ?? accounts[0] ?? null
 
+  const { categories, fetchCategories } = useCategories()
+  const {
+    budgetStatus,
+    incomeRatio,
+    loading: budgetLoading,
+    fetchBudgetStatus,
+    fetchIncomeRatio,
+  } = useReports()
+
   useEffect(() => {
     fetchAccounts()
-  }, [fetchAccounts])
+    fetchCategories()
+  }, [fetchAccounts, fetchCategories])
 
   useEffect(() => {
     if (!activeAccountId) return
     fetchMonthlyReport(month, year)
     fetchComparative(month, year)
-  }, [month, year, activeAccountId, fetchMonthlyReport, fetchComparative])
+    fetchIncomeRatio({ accountId: activeAccountId, month, year })
+  }, [month, year, activeAccountId, fetchMonthlyReport, fetchComparative, fetchIncomeRatio])
+
+  useEffect(() => {
+    if (!activeAccountId || !selectedCategoryId) return
+    fetchBudgetStatus({ accountId: activeAccountId, categoryId: selectedCategoryId, month, year })
+  }, [selectedCategoryId, month, year, activeAccountId, fetchBudgetStatus])
 
   const monthName = MONTHS[month - 1]
 
@@ -225,6 +247,37 @@ export const ReportsPage = () => {
                 ✅ No hay cuotas a pagar en {monthName} {year}
               </div>
             )}
+
+            <BudgetStatusCard
+              budgetStatus={budgetStatus}
+              loading={budgetLoading}
+              monthName={monthName}
+              year={year}
+              selectedCategoryId={selectedCategoryId}
+              selector={
+                <Select
+                  label="Seleccioná una categoría"
+                  value={selectedCategoryId ?? ''}
+                  onChange={e =>
+                    setSelectedCategoryId(e.target.value ? Number(e.target.value) : undefined)
+                  }
+                >
+                  <option value="">— Elegí una categoría —</option>
+                  {categories.map(cat => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </Select>
+              }
+            />
+
+            <IncomeRatioCard
+              incomeRatio={incomeRatio}
+              loading={budgetLoading}
+              monthName={monthName}
+              year={year}
+            />
           </>
         )}
       </div>

@@ -10,6 +10,8 @@ export const BACKEND_API_ENDPOINTS = {
   GET_CATEGORIES_REPORT: 'reports/category',
   GET_CARDS_REPORT: 'reports/cards',
   GET_COMPARISON_REPORT: 'reports/comparison',
+  GET_BUDGET_STATUS_REPORT: 'reports/budget-status',
+  GET_INCOME_RATIO_REPORT: 'reports/income-ratio',
 
   // ACCOUNTS
   ACCOUNTS: '/accounts',

@@ -6,6 +6,9 @@ import type {
   CategoryAnalysisDataInterface,
   ComparasionDataInterface,
   CardToPayInterface,
+  BudgetStatusReportInterface,
+  AccountPeriodRequestInterface,
+  IncomeRatioReportInterface,
 } from '../types'
 import api from './api'
 
@@ -46,6 +49,22 @@ export const reportsService = {
   getComparative: async (accountId: number, month: number, year: number) => {
     const response = await api.get<ApiResponseInterface<ComparasionDataInterface>>(
       `${BACKEND_API_ENDPOINTS.GET_COMPARISON_REPORT}?accountId=${accountId}&month=${month}&year=${year}`
+    )
+    return response.data.data
+  },
+
+  // Budget status for a category in a given period
+  getBudgetStatus: async (data: AccountPeriodRequestInterface) => {
+    const response = await api.get<ApiResponseInterface<BudgetStatusReportInterface>>(
+      `${BACKEND_API_ENDPOINTS.GET_BUDGET_STATUS_REPORT}?accountId=${data.accountId}&categoryId=${data.categoryId}&month=${data.month}&year=${data.year}`
+    )
+    return response.data.data
+  },
+
+  // Income vs expenses ratio for a given period
+  getIncomeRatio: async (data: AccountPeriodRequestInterface) => {
+    const response = await api.get<ApiResponseInterface<IncomeRatioReportInterface>>(
+      `${BACKEND_API_ENDPOINTS.GET_INCOME_RATIO_REPORT}?accountId=${data.accountId}&month=${data.month}&year=${data.year}`
     )
     return response.data.data
   },
