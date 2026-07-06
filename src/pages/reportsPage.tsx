@@ -258,11 +258,15 @@ export const ReportsPage = () => {
                 <Select
                   label="Seleccioná una categoría"
                   value={selectedCategoryId ?? ''}
-                  onChange={e => setSelectedCategoryId(e.target.value ? Number(e.target.value) : undefined)}
+                  onChange={e =>
+                    setSelectedCategoryId(e.target.value ? Number(e.target.value) : undefined)
+                  }
                 >
                   <option value="">— Elegí una categoría —</option>
                   {categories.map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
                   ))}
                 </Select>
               }
