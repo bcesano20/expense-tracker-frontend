@@ -68,10 +68,6 @@ export const IncomePage = () => {
     setShowForm(true)
   }
 
-  const totalIncome = incomes.reduce((sum, i) => sum + i.amount, 0)
-  const averageIncome = incomes.length > 0 ? totalIncome / incomes.length : 0
-  const highestIncome = incomes.length > 0 ? Math.max(...incomes.map(i => i.amount)) : 0
-
   if (accountsLoading) {
     return (
       <div className="min-h-screen bg-gray-50">

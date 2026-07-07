@@ -51,7 +51,8 @@ const renderNotesCell = (row: ExpenseInterface, currency?: string) => {
     const { installmentNumber, totalInstallments, installmentAmount } = installments![0]
     return (
       <span className="text-sm text-gray-700">
-        Cuota {installmentNumber}/{totalInstallments} · {formatCurrency(installmentAmount, currency)}
+        Cuota {installmentNumber}/{totalInstallments} ·{' '}
+        {formatCurrency(installmentAmount, currency)}
       </span>
     )
   }
@@ -89,7 +90,9 @@ export const ExpensesTable = ({
       label: 'Monto',
       width: '120px',
       render: value => (
-        <span className="font-semibold text-gray-900">{formatCurrency(value as number, currency)}</span>
+        <span className="font-semibold text-gray-900">
+          {formatCurrency(value as number, currency)}
+        </span>
       ),
     },
     {

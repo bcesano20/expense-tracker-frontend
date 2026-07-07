@@ -257,13 +257,17 @@ export const ExpensesPage = () => {
             <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-white p-4 rounded-lg shadow">
                 <p className="text-sm text-gray-600 mb-1">Gastos totales en el mes</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalSpent, activeAccount.currency)}</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {formatCurrency(totalSpent, activeAccount.currency)}
+                </p>
                 <p className="text-xs text-gray-500 mt-2">{expenseCount} gastos</p>
               </div>
 
               <div className="bg-white p-4 rounded-lg shadow">
                 <p className="text-sm text-gray-600 mb-1">Promedio por Gasto en el mes</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(average, activeAccount.currency)}</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {formatCurrency(average, activeAccount.currency)}
+                </p>
                 <p className="text-xs text-gray-500 mt-2">
                   {monthName} {year}
                 </p>

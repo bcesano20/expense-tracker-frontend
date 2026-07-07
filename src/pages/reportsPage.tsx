@@ -168,7 +168,10 @@ export const ReportsPage = () => {
               )}
 
               {report.expensesByPaymentMethod.length > 0 && (
-                <PaymentMethodBarChart data={report.expensesByPaymentMethod} currency={activeAccount?.currency} />
+                <PaymentMethodBarChart
+                  data={report.expensesByPaymentMethod}
+                  currency={activeAccount?.currency}
+                />
               )}
             </div>
 
@@ -232,7 +235,10 @@ export const ReportsPage = () => {
                                     </span>
                                   </span>
                                   <span className="font-medium shrink-0">
-                                    {formatCurrency(installment.amount ?? 0, activeAccount?.currency)}
+                                    {formatCurrency(
+                                      installment.amount ?? 0,
+                                      activeAccount?.currency
+                                    )}
                                   </span>
                                 </li>
                               ))}

@@ -181,7 +181,10 @@ export const AccountsPage = () => {
               <h3 className="text-2xl font-bold text-gray-900">
                 Tarjetas de {accounts.find(a => a.id === activeAccountId)?.name}
               </h3>
-              <Button onClick={handleCreateCard} className="whitespace-nowrap self-end sm:shrink-0 sm:self-auto">
+              <Button
+                onClick={handleCreateCard}
+                className="whitespace-nowrap self-end sm:shrink-0 sm:self-auto"
+              >
                 + Tarjeta
               </Button>
             </div>
@@ -222,7 +225,13 @@ export const AccountsPage = () => {
                         <p className="text-sm text-gray-600">Cierre: día {card.closeDay}</p>
                       )}
                       {card.type === 'debit' && card.balance !== undefined && (
-                        <p className="text-sm text-gray-600">Saldo: {formatCurrency(card.balance, accounts.find(a => a.id === activeAccountId)?.currency)}</p>
+                        <p className="text-sm text-gray-600">
+                          Saldo:{' '}
+                          {formatCurrency(
+                            card.balance,
+                            accounts.find(a => a.id === activeAccountId)?.currency
+                          )}
+                        </p>
                       )}
                     </div>
 

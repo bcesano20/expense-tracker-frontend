@@ -96,7 +96,8 @@ export const BudgetStatusCard = ({
                 </p>
               ) : (
                 <p className="text-xl font-bold text-gray-900">
-                  {formatCurrency(budgetStatus!.budget.minAmount ?? 0, currency)} – {formatCurrency(budgetStatus!.budget.maxAmount ?? 0, currency)}
+                  {formatCurrency(budgetStatus!.budget.minAmount ?? 0, currency)} –{' '}
+                  {formatCurrency(budgetStatus!.budget.maxAmount ?? 0, currency)}
                 </p>
               )}
               <p className="text-xs text-gray-400">
@@ -119,7 +120,10 @@ export const BudgetStatusCard = ({
                   <p
                     className={`text-xl font-bold ${(budgetStatus!.budget.maxAmount ?? 0) - budgetStatus!.totalSpent >= 0 ? 'text-green-600' : 'text-red-600'}`}
                   >
-                    {formatCurrency((budgetStatus!.budget.maxAmount ?? 0) - budgetStatus!.totalSpent, currency)}
+                    {formatCurrency(
+                      (budgetStatus!.budget.maxAmount ?? 0) - budgetStatus!.totalSpent,
+                      currency
+                    )}
                   </p>
                 </>
               )}

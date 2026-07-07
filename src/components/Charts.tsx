@@ -16,14 +16,17 @@ import { MONTHS } from '../helpers/constants'
 import { formatCurrency } from '../helpers/utils'
 import type { CategoryFilter, PaymentMethodFilterInterface } from '../types'
 
-
 interface PieChartProps {
   data: Array<CategoryFilter>
   title?: string
   currency?: string
 }
 
-export const CategoryPieChart = ({ data, title = 'Gastos por Categoría', currency }: PieChartProps) => {
+export const CategoryPieChart = ({
+  data,
+  title = 'Gastos por Categoría',
+  currency,
+}: PieChartProps) => {
   const chartData = data.map(item => ({
     name: item.category,
     value: item.total,
@@ -65,7 +68,9 @@ export const CategoryPieChart = ({ data, title = 'Gastos por Categoría', curren
             </div>
             <span className="font-medium text-gray-900 shrink-0">
               {total > 0 ? ((entry.value / total) * 100).toFixed(1) : '0.0'}%
-              <span className="text-gray-400 font-normal ml-1">{formatCurrency(entry.value, currency)}</span>
+              <span className="text-gray-400 font-normal ml-1">
+                {formatCurrency(entry.value, currency)}
+              </span>
             </span>
           </li>
         ))}
@@ -209,7 +214,8 @@ export const ComparativeChart = ({
       >
         <p className="text-sm text-gray-600 mb-2">Variación</p>
         <p className={`text-2xl font-bold ${trendColor}`}>
-          {trendIcon} {formatCurrency(Math.abs(difference ?? 0), currency)} ({(percentageChange ?? 0).toFixed(1)}%)
+          {trendIcon} {formatCurrency(Math.abs(difference ?? 0), currency)} (
+          {(percentageChange ?? 0).toFixed(1)}%)
         </p>
         <p className="text-xs text-gray-500 mt-2">
           {trend === 'INCREASE'
