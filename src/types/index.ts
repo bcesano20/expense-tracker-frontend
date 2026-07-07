@@ -190,6 +190,7 @@ export interface CategoryFilter {
   category: string
   total: number
   percentage: number
+  color: string
 }
 
 export interface PaymentMethodFilterInterface {

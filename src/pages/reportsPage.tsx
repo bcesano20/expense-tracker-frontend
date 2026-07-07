@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { MONTHS, ROUTES } from '../helpers/constants'
+import { formatCurrency } from '../helpers/utils'
 import { useAuth } from '../hooks/useAuth'
 import { useMonthlyReport } from '../hooks/useMonthlyReports'
 import { useAccounts } from '../hooks/useAccounts'
@@ -125,7 +126,7 @@ export const ReportsPage = () => {
               <div className="bg-white p-6 rounded-lg shadow">
                 <p className="text-sm text-gray-600 mb-2">Total Gastado</p>
                 <p className="text-3xl font-bold text-gray-900">
-                  ${(report.summary.totalSpent ?? 0).toFixed(2)}
+                  {formatCurrency(report.summary.totalSpent ?? 0, activeAccount?.currency)}
                 </p>
                 <p className="text-xs text-gray-500 mt-2">{report.summary.expenseCount} gastos</p>
               </div>
@@ -148,7 +149,7 @@ export const ReportsPage = () => {
               <div className="bg-white p-6 rounded-lg shadow">
                 <p className="text-sm text-gray-600 mb-2">Total a Pagar</p>
                 <p className="text-3xl font-bold text-red-600">
-                  ${(report.totalCardPayments ?? 0).toFixed(2)}
+                  {formatCurrency(report.totalCardPayments ?? 0, activeAccount?.currency)}
                 </p>
                 <p className="text-xs text-gray-500 mt-2">En tarjetas</p>
               </div>
@@ -162,11 +163,15 @@ export const ReportsPage = () => {
                   data={report.expensesByCategory.filter(
                     c => c.category && c.category !== 'undefined'
                   )}
+                  currency={activeAccount?.currency}
                 />
               )}
 
               {report.expensesByPaymentMethod.length > 0 && (
-                <PaymentMethodBarChart data={report.expensesByPaymentMethod} />
+                <PaymentMethodBarChart
+                  data={report.expensesByPaymentMethod}
+                  currency={activeAccount?.currency}
+                />
               )}
             </div>
 
@@ -186,6 +191,7 @@ export const ReportsPage = () => {
                   difference={comparative.comparison?.difference ?? 0}
                   percentageChange={comparative.comparison?.changePercentage ?? 0}
                   trend={comparative.comparison?.trend ?? 'SAME'}
+                  currency={activeAccount?.currency}
                 />
               </div>
             )}
@@ -209,7 +215,7 @@ export const ReportsPage = () => {
                             </p>
                           </div>
                           <p className="text-2xl font-bold text-blue-600">
-                            ${(card.totalDue ?? 0).toFixed(2)}
+                            {formatCurrency(card.totalDue ?? 0, activeAccount?.currency)}
                           </p>
                         </div>
 
@@ -229,7 +235,10 @@ export const ReportsPage = () => {
                                     </span>
                                   </span>
                                   <span className="font-medium shrink-0">
-                                    ${(installment.amount ?? 0).toFixed(2)}
+                                    {formatCurrency(
+                                      installment.amount ?? 0,
+                                      activeAccount?.currency
+                                    )}
                                   </span>
                                 </li>
                               ))}
@@ -254,6 +263,7 @@ export const ReportsPage = () => {
               monthName={monthName}
               year={year}
               selectedCategoryId={selectedCategoryId}
+              currency={activeAccount?.currency}
               selector={
                 <Select
                   label="Seleccioná una categoría"
@@ -277,6 +287,7 @@ export const ReportsPage = () => {
               loading={budgetLoading}
               monthName={monthName}
               year={year}
+              currency={activeAccount?.currency}
             />
           </>
         )}

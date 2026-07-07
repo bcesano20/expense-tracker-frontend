@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 
 import type { BudgetStatusReportInterface } from '../../types'
 import { EmptyState } from '../index'
+import { formatCurrency } from '../../helpers/utils'
 
 interface BudgetStatusCardProps {
   budgetStatus: BudgetStatusReportInterface | null
@@ -10,6 +11,7 @@ interface BudgetStatusCardProps {
   year: number
   selector: ReactNode
   selectedCategoryId: number | undefined
+  currency?: string
 }
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string }> = {
@@ -25,6 +27,7 @@ export const BudgetStatusCard = ({
   year,
   selector,
   selectedCategoryId,
+  currency,
 }: BudgetStatusCardProps) => {
   const hasBudget =
     !loading && budgetStatus && budgetStatus.status !== 'NO_BUDGET' && budgetStatus.budget
@@ -81,7 +84,7 @@ export const BudgetStatusCard = ({
             <div>
               <p className="text-xs text-gray-500 mb-1">Gastado</p>
               <p className="text-xl font-bold text-gray-900">
-                ${(budgetStatus!.totalSpent ?? 0).toFixed(2)}
+                {formatCurrency(budgetStatus!.totalSpent ?? 0, currency)}
               </p>
               <p className="text-xs text-gray-400">{budgetStatus!.expenseCount ?? 0} gastos</p>
             </div>
@@ -89,12 +92,12 @@ export const BudgetStatusCard = ({
               <p className="text-xs text-gray-500 mb-1">Presupuesto</p>
               {budgetStatus!.budget.type === 'fixed' ? (
                 <p className="text-xl font-bold text-gray-900">
-                  ${(budgetStatus!.budget.budgetAmount ?? 0).toFixed(2)}
+                  {formatCurrency(budgetStatus!.budget.budgetAmount ?? 0, currency)}
                 </p>
               ) : (
                 <p className="text-xl font-bold text-gray-900">
-                  ${(budgetStatus!.budget.minAmount ?? 0).toFixed(2)} – $
-                  {(budgetStatus!.budget.maxAmount ?? 0).toFixed(2)}
+                  {formatCurrency(budgetStatus!.budget.minAmount ?? 0, currency)} –{' '}
+                  {formatCurrency(budgetStatus!.budget.maxAmount ?? 0, currency)}
                 </p>
               )}
               <p className="text-xs text-gray-400">
@@ -108,7 +111,7 @@ export const BudgetStatusCard = ({
                   <p
                     className={`text-xl font-bold ${(budgetStatus!.budget.remaining ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}
                   >
-                    ${(budgetStatus!.budget.remaining ?? 0).toFixed(2)}
+                    {formatCurrency(budgetStatus!.budget.remaining ?? 0, currency)}
                   </p>
                 </>
               ) : (
@@ -117,7 +120,10 @@ export const BudgetStatusCard = ({
                   <p
                     className={`text-xl font-bold ${(budgetStatus!.budget.maxAmount ?? 0) - budgetStatus!.totalSpent >= 0 ? 'text-green-600' : 'text-red-600'}`}
                   >
-                    ${((budgetStatus!.budget.maxAmount ?? 0) - budgetStatus!.totalSpent).toFixed(2)}
+                    {formatCurrency(
+                      (budgetStatus!.budget.maxAmount ?? 0) - budgetStatus!.totalSpent,
+                      currency
+                    )}
                   </p>
                 </>
               )}

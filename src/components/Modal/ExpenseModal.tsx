@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import type { CardInterface, CategoryInterface, ExpenseInterface } from '../../types'
 import { Button, Input, Select, Textarea } from '../index'
+import { formatCurrency } from '../../helpers/utils'
 
 interface ExpenseModalProps {
   isOpen: boolean
@@ -13,6 +14,7 @@ interface ExpenseModalProps {
   cards?: CardInterface[]
   onCreateCategory?: () => void
   onEditCategory?: (category: CategoryInterface) => void
+  currency?: string
 }
 
 const DEFAULT_EXPENSE_FORM: Partial<ExpenseInterface> = {
@@ -34,6 +36,7 @@ export const ExpenseModal = ({
   cards = [],
   onCreateCategory,
   onEditCategory,
+  currency,
 }: ExpenseModalProps) => {
   const normalizedPaymentMethod = expense?.paymentMethod?.startsWith('card')
     ? 'card'
@@ -90,7 +93,7 @@ export const ExpenseModal = ({
       formData.amount !== undefined &&
       formData.amount > selectedCard.balance
     ) {
-      newErrors.amount = `El monto supera el saldo disponible ($${selectedCard.balance.toFixed(2)})`
+      newErrors.amount = `El monto supera el saldo disponible (${formatCurrency(selectedCard.balance, currency)})`
     }
 
     setErrors(newErrors)
@@ -270,7 +273,7 @@ export const ExpenseModal = ({
               </Select>
               {selectedCard?.type === 'debit' && selectedCard.balance !== undefined && (
                 <p className="text-xs text-gray-500">
-                  Saldo disponible: ${selectedCard.balance.toFixed(2)}
+                  Saldo disponible: {formatCurrency(selectedCard.balance, currency)}
                 </p>
               )}
             </div>
@@ -291,7 +294,7 @@ export const ExpenseModal = ({
               </Select>
               {installmentsCount > 1 && (
                 <p className="text-xs text-gray-500 -mt-2">
-                  Monto por cuota: ${(formData.amount! / installmentsCount).toFixed(2)}
+                  Monto por cuota: {formatCurrency(formData.amount! / installmentsCount, currency)}
                 </p>
               )}
             </>

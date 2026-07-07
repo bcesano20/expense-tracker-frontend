@@ -47,6 +47,7 @@ export const ROUTES = {
 
 export const REGEXP = {
   EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  PASSWORD_REGEX: /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/,
 }
 
 export const ERROR_MESSAGES = {
@@ -65,7 +66,7 @@ export const ERROR_MESSAGES = {
   CREATE_INCOME_ERROR: 'Error al crear el ingreso',
   UPDATE_INCOME_ERROR: 'Error al actualizar el ingreso',
   DELETE_INCOME_ERROR: 'Error al eliminar el ingreso',
-  PASSWORD_INVALID_ERROR: 'La contraseña debe tener al menos 6 caracteres',
+  PASSWORD_INVALID_ERROR: 'La contraseña debe tener al menos 8 caracteres, letras y números',
   PASSWORD_NOT_MATCH: 'Las contraseñas no coinciden',
   REGISTER_ERROR: 'Error al registrarse',
   MONTHLY_REPORT_ERROR: 'Error al cargar el reporte mensual',
