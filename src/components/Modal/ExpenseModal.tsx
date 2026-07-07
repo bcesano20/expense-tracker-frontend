@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import type { CardInterface, CategoryInterface, ExpenseInterface } from '../../types'
-import { Button, Input, Select } from '../index'
+import { Button, Input, Select, Textarea } from '../index'
 
 interface ExpenseModalProps {
   isOpen: boolean
@@ -13,6 +13,15 @@ interface ExpenseModalProps {
   cards?: CardInterface[]
   onCreateCategory?: () => void
   onEditCategory?: (category: CategoryInterface) => void
+}
+
+const DEFAULT_EXPENSE_FORM: Partial<ExpenseInterface> = {
+  description: '',
+  amount: 0,
+  date: new Date().toISOString().split('T')[0],
+  categoryId: undefined,
+  paymentMethod: 'cash',
+  notes: '',
 }
 
 export const ExpenseModal = ({
@@ -33,19 +42,12 @@ export const ExpenseModal = ({
   const [formData, setFormData] = useState<Partial<ExpenseInterface>>(
     expense
       ? {
-          description: expense.description,
-          amount: expense.amount,
-          date: expense.date,
-          categoryId: expense.categoryId,
+          ...DEFAULT_EXPENSE_FORM,
+          ...expense,
           paymentMethod: normalizedPaymentMethod,
+          date: expense.date.split('T')[0],
         }
-      : {
-          description: '',
-          amount: 0,
-          date: new Date().toISOString().split('T')[0],
-          categoryId: undefined,
-          paymentMethod: 'cash',
-        }
+      : DEFAULT_EXPENSE_FORM
   )
 
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -120,6 +122,7 @@ export const ExpenseModal = ({
     try {
       await onSubmit({
         ...formData,
+        notes: formData.notes?.trim() || null,
         cardId: selectedCardId,
         ...(showInstallments && { totalInstallments: installmentsCount }),
       })
@@ -293,6 +296,14 @@ export const ExpenseModal = ({
               )}
             </>
           )}
+
+          <Textarea
+            label="Notas (opcional)"
+            name="notes"
+            value={formData.notes ?? ''}
+            onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+            placeholder="Agregá una nota adicional sobre este gasto..."
+          />
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
