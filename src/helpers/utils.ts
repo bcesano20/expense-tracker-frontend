@@ -7,9 +7,8 @@ export const formatDate = (dateString: string) => {
   })
 }
 
-export const formatCurrency = (amount: number) => {
-  return `$${amount.toFixed(2)}`
-}
+export const formatCurrency = (amount: number, currency = 'ARS') =>
+  new Intl.NumberFormat('es-AR', { style: 'currency', currency }).format(amount)
 
 export const getCategoryColor = (category: string) => {
   const colors: Record<string, string> = {
