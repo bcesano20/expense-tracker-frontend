@@ -1,6 +1,7 @@
 import {
   PieChart,
   Pie,
+  Cell,
   BarChart,
   Bar,
   XAxis,
@@ -12,45 +13,37 @@ import {
 } from 'recharts'
 
 import { MONTHS } from '../helpers/constants'
+import { formatCurrency } from '../helpers/utils'
 import type { CategoryFilter, PaymentMethodFilterInterface } from '../types'
 
-const CATEGORY_COLORS = [
-  '#3B82F6', // Blue
-  '#10B981', // Green
-  '#F59E0B', // Amber
-  '#EF4444', // Red
-  '#8B5CF6', // Purple
-  '#EC4899', // Pink
-]
 
 interface PieChartProps {
   data: Array<CategoryFilter>
   title?: string
+  currency?: string
 }
 
-export const CategoryPieChart = ({ data, title = 'Gastos por Categoría' }: PieChartProps) => {
-  const chartData = data.map((item, index) => ({
+export const CategoryPieChart = ({ data, title = 'Gastos por Categoría', currency }: PieChartProps) => {
+  const chartData = data.map(item => ({
     name: item.category,
     value: item.total,
-    fill: CATEGORY_COLORS[index % CATEGORY_COLORS.length],
+    fill: item.color,
   }))
+
+  const total = chartData.reduce((sum, entry) => sum + entry.value, 0)
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={260}>
         <PieChart>
-          <Pie
-            data={chartData}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(1)}%`}
-            outerRadius={100}
-            dataKey="value"
-          />
+          <Pie data={chartData} cx="50%" cy="50%" outerRadius={100} dataKey="value">
+            {chartData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.fill} />
+            ))}
+          </Pie>
           <Tooltip
-            formatter={value => `$${Number(value).toFixed(2)}`}
+            formatter={value => formatCurrency(Number(value), currency)}
             contentStyle={{
               backgroundColor: '#fff',
               border: '1px solid #ccc',
@@ -59,6 +52,24 @@ export const CategoryPieChart = ({ data, title = 'Gastos por Categoría' }: PieC
           />
         </PieChart>
       </ResponsiveContainer>
+
+      <ul className="mt-4 space-y-2">
+        {chartData.map((entry, index) => (
+          <li key={index} className="flex items-center justify-between text-sm gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <span
+                className="w-3 h-3 rounded-full shrink-0"
+                style={{ backgroundColor: entry.fill }}
+              />
+              <span className="text-gray-700 truncate">{entry.name}</span>
+            </div>
+            <span className="font-medium text-gray-900 shrink-0">
+              {total > 0 ? ((entry.value / total) * 100).toFixed(1) : '0.0'}%
+              <span className="text-gray-400 font-normal ml-1">{formatCurrency(entry.value, currency)}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
@@ -66,11 +77,13 @@ export const CategoryPieChart = ({ data, title = 'Gastos por Categoría' }: PieC
 interface BarChartProps {
   data: Array<PaymentMethodFilterInterface>
   title?: string
+  currency?: string
 }
 
 export const PaymentMethodBarChart = ({
   data,
   title = 'Gastos por Medio de Pago',
+  currency,
 }: BarChartProps) => {
   const METHOD_LABELS: Record<string, string> = {
     cash: 'Efectivo',
@@ -103,7 +116,7 @@ export const PaymentMethodBarChart = ({
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip
-            formatter={value => `$${Number(value).toFixed(2)}`}
+            formatter={value => formatCurrency(Number(value), currency)}
             contentStyle={{
               backgroundColor: '#fff',
               border: '1px solid #ccc',
@@ -128,6 +141,7 @@ interface ComparativeProps {
   difference: number
   percentageChange: number
   trend: 'INCREASE' | 'DECREASE' | 'SAME'
+  currency?: string
 }
 
 export const ComparativeChart = ({
@@ -140,6 +154,7 @@ export const ComparativeChart = ({
   difference,
   percentageChange,
   trend,
+  currency,
 }: ComparativeProps) => {
   const chartData = [
     {
@@ -171,7 +186,7 @@ export const ComparativeChart = ({
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip
-            formatter={value => `$${Number(value).toFixed(2)}`}
+            formatter={value => formatCurrency(Number(value), currency)}
             contentStyle={{
               backgroundColor: '#fff',
               border: '1px solid #ccc',
@@ -194,8 +209,7 @@ export const ComparativeChart = ({
       >
         <p className="text-sm text-gray-600 mb-2">Variación</p>
         <p className={`text-2xl font-bold ${trendColor}`}>
-          {trendIcon} ${Math.abs(difference ?? 0).toFixed(2)} ({(percentageChange ?? 0).toFixed(1)}
-          %)
+          {trendIcon} {formatCurrency(Math.abs(difference ?? 0), currency)} ({(percentageChange ?? 0).toFixed(1)}%)
         </p>
         <p className="text-xs text-gray-500 mt-2">
           {trend === 'INCREASE'

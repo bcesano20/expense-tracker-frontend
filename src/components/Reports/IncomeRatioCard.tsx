@@ -1,11 +1,13 @@
 import type { IncomeRatioReportInterface } from '../../types'
 import { EmptyState } from '../index'
+import { formatCurrency } from '../../helpers/utils'
 
 interface IncomeRatioCardProps {
   incomeRatio: IncomeRatioReportInterface | null
   loading: boolean
   monthName: string
   year: number
+  currency?: string
 }
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string }> = {
@@ -19,6 +21,7 @@ export const IncomeRatioCard = ({
   loading,
   monthName,
   year,
+  currency,
 }: IncomeRatioCardProps) => {
   const hasData = !loading && incomeRatio && (incomeRatio.incomeCount ?? 0) > 0
 
@@ -60,14 +63,14 @@ export const IncomeRatioCard = ({
             <div>
               <p className="text-xs text-gray-500 mb-1">Ingresos</p>
               <p className="text-xl font-bold text-green-600">
-                ${(incomeRatio!.totalIncome ?? 0).toFixed(2)}
+                {formatCurrency(incomeRatio!.totalIncome ?? 0, currency)}
               </p>
               <p className="text-xs text-gray-400">{incomeRatio!.incomeCount ?? 0} ingresos</p>
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">Gastos</p>
               <p className="text-xl font-bold text-red-600">
-                ${(incomeRatio!.totalExpenses ?? 0).toFixed(2)}
+                {formatCurrency(incomeRatio!.totalExpenses ?? 0, currency)}
               </p>
               <p className="text-xs text-gray-400">{incomeRatio!.expenseCount ?? 0} gastos</p>
             </div>
@@ -76,7 +79,7 @@ export const IncomeRatioCard = ({
               <p
                 className={`text-xl font-bold ${(incomeRatio!.balance ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}
               >
-                ${(incomeRatio!.balance ?? 0).toFixed(2)}
+                {formatCurrency(incomeRatio!.balance ?? 0, currency)}
               </p>
               <p className="text-xs text-gray-400">
                 {(incomeRatio!.expensePercentage ?? 0).toFixed(1)}% en gastos

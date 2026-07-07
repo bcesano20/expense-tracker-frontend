@@ -11,8 +11,13 @@ export const Footer = () => {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">F</span>
+              {/* Logo/Icon */}
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+                <img
+                  src="/SpendWise-Logo.png"
+                  alt={branding.appName}
+                  className="w-70 h-full object-contain"
+                />
               </div>
               <span className="font-bold text-white">{branding.appName}</span>
             </div>

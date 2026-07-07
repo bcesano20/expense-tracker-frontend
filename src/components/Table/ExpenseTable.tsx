@@ -13,6 +13,7 @@ interface ExpensesTableProps {
   error?: string | null
   onEdit?: (expense: ExpenseInterface) => void
   onDelete?: (id: number) => void
+  currency?: string
 }
 
 const renderPaymentMethodCell = (value: unknown, row: ExpenseInterface) => {
@@ -41,7 +42,7 @@ const renderPaymentMethodCell = (value: unknown, row: ExpenseInterface) => {
 }
 
 // helper to render correctly what to show in the notes column
-const renderNotesCell = (row: ExpenseInterface) => {
+const renderNotesCell = (row: ExpenseInterface, currency?: string) => {
   const installments = row.installments
   const hasMultipleInstallments =
     installments && installments.length > 0 && installments[0].totalInstallments > 1
@@ -50,7 +51,7 @@ const renderNotesCell = (row: ExpenseInterface) => {
     const { installmentNumber, totalInstallments, installmentAmount } = installments![0]
     return (
       <span className="text-sm text-gray-700">
-        Cuota {installmentNumber}/{totalInstallments} · ${installmentAmount.toFixed(2)}
+        Cuota {installmentNumber}/{totalInstallments} · {formatCurrency(installmentAmount, currency)}
       </span>
     )
   }
@@ -68,6 +69,7 @@ export const ExpensesTable = ({
   error = null,
   onEdit,
   onDelete,
+  currency,
 }: ExpensesTableProps) => {
   // Table Columns
   const columns: ColumnInterface<ExpenseInterface>[] = [
@@ -87,7 +89,7 @@ export const ExpensesTable = ({
       label: 'Monto',
       width: '120px',
       render: value => (
-        <span className="font-semibold text-gray-900">{formatCurrency(value as number)}</span>
+        <span className="font-semibold text-gray-900">{formatCurrency(value as number, currency)}</span>
       ),
     },
     {
@@ -116,7 +118,7 @@ export const ExpensesTable = ({
       key: 'installments',
       label: 'Notas',
       width: '160px',
-      render: (_, row) => renderNotesCell(row),
+      render: (_, row) => renderNotesCell(row, currency),
     },
   ]
 
