@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import type { ExpenseInterface, ColumnInterface } from '../../types'
 import {
   formatCurrency,
@@ -6,6 +8,7 @@ import {
   getPaymentMethodIcon,
 } from '../../helpers/utils'
 import { Table } from './Table'
+import { DeleteModal } from '../index'
 
 interface ExpensesTableProps {
   expenses: ExpenseInterface[]
@@ -72,6 +75,7 @@ export const ExpensesTable = ({
   onDelete,
   currency,
 }: ExpensesTableProps) => {
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
   // Table Columns
   const columns: ColumnInterface<ExpenseInterface>[] = [
     {
@@ -139,11 +143,7 @@ export const ExpensesTable = ({
       )}
       {onDelete && (
         <button
-          onClick={() => {
-            if (window.confirm('¿Estás seguro de que quieres eliminar este gasto?')) {
-              onDelete(expense.id)
-            }
-          }}
+          onClick={() => setPendingDeleteId(expense.id)}
           className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition text-sm font-medium"
           title="Eliminar"
         >
@@ -154,14 +154,25 @@ export const ExpensesTable = ({
   )
 
   return (
-    <Table<ExpenseInterface>
-      columns={columns}
-      data={expenses}
-      loading={loading}
-      error={error}
-      keyField="id"
-      actions={actions}
-      emptyMessage="No hay gastos para mostrar. ¡Crea uno nuevo!"
-    />
+    <>
+      <Table<ExpenseInterface>
+        columns={columns}
+        data={expenses}
+        loading={loading}
+        error={error}
+        keyField="id"
+        actions={actions}
+        emptyMessage="No hay gastos para mostrar. ¡Crea uno nuevo!"
+      />
+      <DeleteModal
+        isOpen={pendingDeleteId !== null}
+        title="¿Eliminar gasto?"
+        description="Esta acción no se puede deshacer."
+        onConfirm={async () => {
+          await onDelete!(pendingDeleteId!)
+        }}
+        onClose={() => setPendingDeleteId(null)}
+      />
+    </>
   )
 }

@@ -61,6 +61,12 @@ export const IncomePage = () => {
 
   const handleDelete = async (id: number) => {
     await deleteIncome(id)
+    await fetchIncomes({
+      accountId: activeAccount!.id,
+      month,
+      year,
+      pagination: { page, limit: 10 },
+    })
   }
 
   const handleCreateNew = () => {

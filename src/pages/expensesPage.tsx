@@ -132,6 +132,16 @@ export const ExpensesPage = () => {
 
   const handleDelete = async (id: number) => {
     await deleteExpense(id)
+    await Promise.all([
+      fetchExpenses({
+        accountId: activeAccount.id,
+        month,
+        year,
+        categoryId,
+        pagination: { page, limit: 10 },
+      }),
+      fetchMonthlyReport(month, year),
+    ])
   }
 
   const handleCreateNew = () => {
@@ -393,6 +403,7 @@ export const ExpensesPage = () => {
           onClose={() => setShowBudgetsListModal(false)}
           onDelete={async id => {
             await deleteBudget(id)
+            await fetchBudgets({ accountId: activeAccount.id, month, year })
           }}
           onEdit={budget => {
             setSelectedBudget(budget)

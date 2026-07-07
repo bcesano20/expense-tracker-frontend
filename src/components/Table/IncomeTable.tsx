@@ -1,6 +1,9 @@
+import { useState } from 'react'
+
 import type { IncomeInterface, ColumnInterface } from '../../types'
 import { formatCurrency, formatDate } from '../../helpers/utils'
 import { Table } from './Table'
+import { DeleteModal } from '../index'
 
 interface IncomeTableProps {
   incomes: IncomeInterface[]
@@ -17,6 +20,7 @@ export const IncomeTable = ({
   onEdit,
   onDelete,
 }: IncomeTableProps) => {
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
   const columns: ColumnInterface<IncomeInterface>[] = [
     {
       key: 'date',
@@ -57,11 +61,7 @@ export const IncomeTable = ({
       )}
       {onDelete && (
         <button
-          onClick={() => {
-            if (window.confirm('¿Estás seguro de que quieres eliminar este ingreso?')) {
-              onDelete(income.id)
-            }
-          }}
+          onClick={() => setPendingDeleteId(income.id)}
           className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition text-sm font-medium"
           title="Eliminar"
         >
@@ -72,14 +72,25 @@ export const IncomeTable = ({
   )
 
   return (
-    <Table<IncomeInterface>
-      columns={columns}
-      data={incomes}
-      loading={loading}
-      error={error}
-      keyField="id"
-      actions={actions}
-      emptyMessage="No hay ingresos para mostrar. ¡Registra uno nuevo!"
-    />
+    <>
+      <Table<IncomeInterface>
+        columns={columns}
+        data={incomes}
+        loading={loading}
+        error={error}
+        keyField="id"
+        actions={actions}
+        emptyMessage="No hay ingresos para mostrar. ¡Registra uno nuevo!"
+      />
+      <DeleteModal
+        isOpen={pendingDeleteId !== null}
+        title="¿Eliminar ingreso?"
+        description="Esta acción no se puede deshacer."
+        onConfirm={async () => {
+          await onDelete!(pendingDeleteId!)
+        }}
+        onClose={() => setPendingDeleteId(null)}
+      />
+    </>
   )
 }
