@@ -91,6 +91,7 @@ export const ERROR_MESSAGES = {
   CREATE_BUDGET_ERROR: 'Error al crear el presupuesto',
   UPDATE_BUDGET_ERROR: 'Error al actualizar el presupuesto',
   DELETE_BUDGET_ERROR: 'Error al eliminar el presupuesto',
+  DELETE_GENERIC_ERROR: 'No se pudo eliminar. Intentá de nuevo.',
 }
 
 export const MONTHS = [

@@ -1,5 +1,7 @@
+import { useState } from 'react'
+
 import type { BudgetInterface } from '../../types'
-import { EmptyState } from '../index'
+import { EmptyState, DeleteModal } from '../index'
 import { formatCurrency } from '../../helpers/utils'
 
 interface BudgetsListModalProps {
@@ -23,18 +25,14 @@ export const BudgetsListModal = ({
   onDelete,
   onEdit,
 }: BudgetsListModalProps) => {
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
+
   if (!isOpen) return null
 
   const periodLabel = new Date(year, month - 1).toLocaleString('es', {
     month: 'long',
     year: 'numeric',
   })
-
-  const handleDelete = (id: number) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este presupuesto?')) {
-      onDelete(id)
-    }
-  }
 
   const budgetSummary = (budget: BudgetInterface) => {
     if (budget.amount != null) {
@@ -102,7 +100,7 @@ export const BudgetsListModal = ({
                       ✏️
                     </button>
                     <button
-                      onClick={() => handleDelete(budget.id)}
+                      onClick={() => setPendingDeleteId(budget.id)}
                       className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition"
                       title="Eliminar presupuesto"
                     >
@@ -115,6 +113,16 @@ export const BudgetsListModal = ({
           )}
         </div>
       </div>
+
+      <DeleteModal
+        isOpen={pendingDeleteId !== null}
+        title="¿Eliminar presupuesto?"
+        description="Esta acción no se puede deshacer."
+        onConfirm={async () => {
+          await onDelete(pendingDeleteId!)
+        }}
+        onClose={() => setPendingDeleteId(null)}
+      />
     </div>
   )
 }

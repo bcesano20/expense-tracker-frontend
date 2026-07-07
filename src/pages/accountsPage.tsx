@@ -7,7 +7,7 @@ import { formatCurrency } from '../helpers/utils'
 import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCards } from '../hooks/useCards'
-import { Button, Navbar, AccountModal, CardModal } from '../components'
+import { Button, Navbar, AccountModal, CardModal, DeleteModal } from '../components'
 
 export const AccountsPage = () => {
   const { state, setActiveAccount } = useAuth()
@@ -18,6 +18,11 @@ export const AccountsPage = () => {
   const [selectedAccount, setSelectedAccount] = useState<AccountInterface | null>(null)
   const [showCardModal, setShowCardModal] = useState<boolean>(false)
   const [selectedCard, setSelectedCard] = useState<CardInterface | null>(null)
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    title: string
+    description: string
+    onConfirm: () => Promise<void>
+  } | null>(null)
 
   const {
     accounts,
@@ -62,14 +67,15 @@ export const AccountsPage = () => {
     setShowAccountModal(true)
   }
 
-  const handleDeleteAccount = async (id: number) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta cuenta?')) {
-      try {
+  const handleDeleteAccount = (id: number) => {
+    setDeleteConfirm({
+      title: '¿Eliminar cuenta?',
+      description:
+        'Se eliminarán también todas las tarjetas y datos asociados. Esta acción no se puede deshacer.',
+      onConfirm: async () => {
         await deleteAccount(id)
-      } catch {
-        // error is set in useAccounts and displayed via accountsError
-      }
-    }
+      },
+    })
   }
 
   const handleCreateCard = () => {
@@ -82,14 +88,14 @@ export const AccountsPage = () => {
     setShowCardModal(true)
   }
 
-  const handleDeleteCard = async (id: number) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar esta tarjeta?')) {
-      try {
+  const handleDeleteCard = (id: number) => {
+    setDeleteConfirm({
+      title: '¿Eliminar tarjeta?',
+      description: 'Esta acción no se puede deshacer.',
+      onConfirm: async () => {
         await deleteCard(id)
-      } catch {
-        // error is set in useAccounts and displayed via cardsError
-      }
-    }
+      },
+    })
   }
 
   return (
@@ -309,6 +315,14 @@ export const AccountsPage = () => {
           }
         }}
         loading={cardsLoading}
+      />
+
+      <DeleteModal
+        isOpen={deleteConfirm !== null}
+        title={deleteConfirm?.title ?? ''}
+        description={deleteConfirm?.description}
+        onConfirm={deleteConfirm?.onConfirm ?? (async () => {})}
+        onClose={() => setDeleteConfirm(null)}
       />
     </div>
   )
