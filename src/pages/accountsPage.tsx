@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import type { AccountInterface, CardFormInterface, CardInterface } from '../types'
 import { ROUTES } from '../helpers/constants'
+import { formatCurrency } from '../helpers/utils'
 import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCards } from '../hooks/useCards'
@@ -97,19 +98,19 @@ export const AccountsPage = () => {
 
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex justify-between items-start mb-6">
-            <div>
+        <div className="mb-4">
+          <div className="flex justify-between items-start mb-1">
+            <div className="min-w-0">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Cuentas y Tarjetas</h2>
-              <p className="text-gray-600">Gestiona tus cuentas y métodos de pago</p>
             </div>
-            <button
+            <Button
               onClick={handleCreateAccount}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+              className="shrink-0 whitespace-nowrap bg-blue-600"
             >
-              ➕ Nueva Cuenta
-            </button>
+              + Cuenta
+            </Button>
           </div>
+          <p className="text-gray-600">Gestiona tus cuentas y métodos de pago</p>
         </div>
 
         {/* Cuentas */}
@@ -176,16 +177,13 @@ export const AccountsPage = () => {
         {/* Tarjetas */}
         {activeAccountId && (
           <div>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
               <h3 className="text-2xl font-bold text-gray-900">
                 Tarjetas de {accounts.find(a => a.id === activeAccountId)?.name}
               </h3>
-              <button
-                onClick={handleCreateCard}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition font-medium text-sm"
-              >
-                ➕ Nueva Tarjeta
-              </button>
+              <Button onClick={handleCreateCard} className="whitespace-nowrap self-end sm:shrink-0 sm:self-auto">
+                + Tarjeta
+              </Button>
             </div>
 
             {cardsLoading ? (
@@ -224,7 +222,7 @@ export const AccountsPage = () => {
                         <p className="text-sm text-gray-600">Cierre: día {card.closeDay}</p>
                       )}
                       {card.type === 'debit' && card.balance !== undefined && (
-                        <p className="text-sm text-gray-600">Saldo: ${card.balance.toFixed(2)}</p>
+                        <p className="text-sm text-gray-600">Saldo: {formatCurrency(card.balance, accounts.find(a => a.id === activeAccountId)?.currency)}</p>
                       )}
                     </div>
 

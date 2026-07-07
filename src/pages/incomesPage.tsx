@@ -118,7 +118,10 @@ export const IncomePage = () => {
                 Cuenta: <span className="font-semibold">{activeAccount.name}</span>
               </p>
             </div>
-            <Button onClick={handleCreateNew}>➕ Registrar Ingreso</Button>
+            <Button onClick={handleCreateNew} className="shrink-0 whitespace-nowrap">
+              {' '}
+              + Ingreso
+            </Button>
           </div>
         </div>
 
@@ -136,29 +139,6 @@ export const IncomePage = () => {
               setPage(1)
             }}
           />
-        </div>
-
-        {/* Quick stats */}
-        <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <p className="text-sm text-gray-600 mb-1">Total Ingresos</p>
-            <p className="text-2xl font-bold text-green-700">${totalIncome.toFixed(2)}</p>
-            <p className="text-xs text-gray-500 mt-2">{incomes.length} ingresos</p>
-          </div>
-
-          <div className="bg-white p-4 rounded-lg shadow">
-            <p className="text-sm text-gray-600 mb-1">Promedio por Ingreso</p>
-            <p className="text-2xl font-bold text-green-700">${averageIncome.toFixed(2)}</p>
-            <p className="text-xs text-gray-500 mt-2">
-              {monthName} {year}
-            </p>
-          </div>
-
-          <div className="bg-white p-4 rounded-lg shadow">
-            <p className="text-sm text-gray-600 mb-1">Mayor Ingreso</p>
-            <p className="text-2xl font-bold text-green-700">${highestIncome.toFixed(2)}</p>
-            <p className="text-xs text-gray-500 mt-2">En este período</p>
-          </div>
         </div>
 
         {/* Incomes table */}

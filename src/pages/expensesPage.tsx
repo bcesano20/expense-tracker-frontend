@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { MONTHS, ROUTES } from '../helpers/constants'
+import { formatCurrency } from '../helpers/utils'
 import type { BudgetInterface, CategoryInterface, ExpenseInterface } from '../types'
 import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
@@ -8,6 +9,7 @@ import { useCards } from '../hooks/useCards'
 import { useExpenses } from '../hooks/useExpenses'
 import { useCategories } from '../hooks/useCategories'
 import { useBudgets } from '../hooks/useBudgets'
+import { useMonthlyReport } from '../hooks/useMonthlyReports'
 import {
   Button,
   BudgetModal,
@@ -74,6 +76,8 @@ export const ExpensesPage = () => {
 
   const { cards, fetchCards } = useCards(activeAccount?.id ?? 0)
 
+  const { report: monthlyReport, fetchMonthlyReport } = useMonthlyReport(activeAccount?.id ?? 0)
+
   const {
     budgets,
     loading: budgetsLoading,
@@ -97,7 +101,8 @@ export const ExpensesPage = () => {
       categoryId,
       pagination: { page, limit: 10 },
     })
-  }, [month, year, categoryId, page, activeAccount, fetchExpenses])
+    fetchMonthlyReport(month, year)
+  }, [month, year, categoryId, page, activeAccount, fetchExpenses, fetchMonthlyReport])
 
   useEffect(() => {
     if (activeAccount?.id) fetchCards()
@@ -180,11 +185,14 @@ export const ExpensesPage = () => {
                 Cuenta: <span className="font-semibold">{activeAccount.name}</span>
               </p>
             </div>
-            <Button onClick={handleCreateNew}>➕ Crear Gasto</Button>
+            <Button className="shrink-0 whitespace-nowrap" onClick={handleCreateNew}>
+              {' '}
+              + Gasto
+            </Button>
           </div>
         </div>
         {/* Month Selector */}
-        <div className="mb-8 bg-white p-6 rounded-lg shadow flex items-center justify-between gap-4">
+        <div className="mb-8 bg-white p-6 rounded-lg shadow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <MonthSelector
             month={month}
             year={year}
@@ -197,7 +205,7 @@ export const ExpensesPage = () => {
               setPage(1)
             }}
           />
-          <div className="flex gap-2 shrink-0">
+          <div className="flex gap-2 sm:shrink-0">
             <Button variant="secondary" onClick={() => setShowBudgetModal(true)}>
               + Presupuesto
             </Button>
@@ -240,41 +248,29 @@ export const ExpensesPage = () => {
           </div>
         </div>
         {/* Quick stats */}
-        <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <p className="text-sm text-gray-600 mb-1">Total Gastos</p>
-            <p className="text-2xl font-bold text-gray-900">
-              ${filteredExpenses.reduce((sum, e) => sum + e.amount, 0).toFixed(2)}
-            </p>
-            <p className="text-xs text-gray-500 mt-2">{filteredExpenses.length} gastos</p>
-          </div>
+        {(() => {
+          const totalSpent = monthlyReport?.summary.totalSpent ?? 0
+          const expenseCount = monthlyReport?.summary.expenseCount ?? 0
+          const average = expenseCount > 0 ? totalSpent / expenseCount : 0
 
-          <div className="bg-white p-4 rounded-lg shadow">
-            <p className="text-sm text-gray-600 mb-1">Promedio por Gasto</p>
-            <p className="text-2xl font-bold text-gray-900">
-              $
-              {filteredExpenses.length > 0
-                ? (
-                    filteredExpenses.reduce((sum, e) => sum + e.amount, 0) / filteredExpenses.length
-                  ).toFixed(2)
-                : '0.00'}
-            </p>
-            <p className="text-xs text-gray-500 mt-2">
-              {monthName} {year}
-            </p>
-          </div>
+          return (
+            <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white p-4 rounded-lg shadow">
+                <p className="text-sm text-gray-600 mb-1">Gastos totales en el mes</p>
+                <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalSpent, activeAccount.currency)}</p>
+                <p className="text-xs text-gray-500 mt-2">{expenseCount} gastos</p>
+              </div>
 
-          <div className="bg-white p-4 rounded-lg shadow">
-            <p className="text-sm text-gray-600 mb-1">Mayor Gasto</p>
-            <p className="text-2xl font-bold text-gray-900">
-              $
-              {filteredExpenses.length > 0
-                ? Math.max(...filteredExpenses.map(e => e.amount)).toFixed(2)
-                : '0.00'}
-            </p>
-            <p className="text-xs text-gray-500 mt-2">En este período</p>
-          </div>
-        </div>
+              <div className="bg-white p-4 rounded-lg shadow">
+                <p className="text-sm text-gray-600 mb-1">Promedio por Gasto en el mes</p>
+                <p className="text-2xl font-bold text-gray-900">{formatCurrency(average, activeAccount.currency)}</p>
+                <p className="text-xs text-gray-500 mt-2">
+                  {monthName} {year}
+                </p>
+              </div>
+            </div>
+          )
+        })()}
 
         {/* Expenses table */}
         <div className="bg-white p-6 rounded-lg shadow">
@@ -285,6 +281,7 @@ export const ExpensesPage = () => {
             error={error}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            currency={activeAccount.currency}
           />
           {!loading && filteredExpenses.length === 0 && !error && (
             <EmptyState
@@ -339,6 +336,7 @@ export const ExpensesPage = () => {
               })
             }}
             loading={loading}
+            currency={activeAccount.currency}
             categories={categories}
             cards={cards}
             onCreateCategory={() => {
