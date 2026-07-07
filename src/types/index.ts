@@ -55,6 +55,7 @@ export interface ExpenseInterface {
   billingMonth: number
   billingYear: number
   accountId: number
+  notes?: string | null
   card?: {
     card: CardInterface
   }

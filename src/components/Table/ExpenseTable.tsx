@@ -15,6 +15,53 @@ interface ExpensesTableProps {
   onDelete?: (id: number) => void
 }
 
+const renderPaymentMethodCell = (value: unknown, row: ExpenseInterface) => {
+  const method = value as string
+  const isCard = method.startsWith('card')
+  const cardType = row.card?.card?.type
+  const LABELS: Record<string, string> = {
+    cash: 'Efectivo',
+    transfer: 'Transferencia',
+    other: 'Otro',
+  }
+  const label = isCard
+    ? cardType === 'credit'
+      ? 'Crédito'
+      : cardType === 'debit'
+        ? 'Débito'
+        : 'Tarjeta'
+    : (LABELS[method] ?? method)
+
+  return (
+    <div className="flex items-center gap-2">
+      <span>{getPaymentMethodIcon(isCard ? 'card' : method)}</span>
+      <span>{label}</span>
+    </div>
+  )
+}
+
+// helper to render correctly what to show in the notes column
+const renderNotesCell = (row: ExpenseInterface) => {
+  const installments = row.installments
+  const hasMultipleInstallments =
+    installments && installments.length > 0 && installments[0].totalInstallments > 1
+
+  if (hasMultipleInstallments) {
+    const { installmentNumber, totalInstallments, installmentAmount } = installments![0]
+    return (
+      <span className="text-sm text-gray-700">
+        Cuota {installmentNumber}/{totalInstallments} · ${installmentAmount.toFixed(2)}
+      </span>
+    )
+  }
+
+  return row.notes ? (
+    <span className="text-sm text-gray-700">{row.notes}</span>
+  ) : (
+    <span className="text-gray-400">—</span>
+  )
+}
+
 export const ExpensesTable = ({
   expenses,
   loading = false,
@@ -63,45 +110,13 @@ export const ExpensesTable = ({
       key: 'paymentMethod',
       label: 'Medio de Pago',
       width: '140px',
-      render: (value, row) => {
-        const method = value as string
-        const isCard = method.startsWith('card')
-        const cardType = row.card?.card?.type
-        const LABELS: Record<string, string> = {
-          cash: 'Efectivo',
-          transfer: 'Transferencia',
-          other: 'Otro',
-        }
-        let label: string
-        if (isCard) {
-          label = cardType === 'credit' ? 'Crédito' : cardType === 'debit' ? 'Débito' : 'Tarjeta'
-        } else {
-          label = LABELS[method] ?? method
-        }
-        return (
-          <div className="flex items-center gap-2">
-            <span>{getPaymentMethodIcon(isCard ? 'card' : method)}</span>
-            <span>{label}</span>
-          </div>
-        )
-      },
+      render: (value, row) => renderPaymentMethodCell(value, row),
     },
     {
       key: 'installments',
-      label: 'Observaciones',
+      label: 'Notas',
       width: '160px',
-      render: (_, row) => {
-        const installments = row.installments
-        if (!installments || installments.length === 0 || installments[0].totalInstallments <= 1) {
-          return <span className="text-gray-400">—</span>
-        }
-        const { installmentNumber, totalInstallments, installmentAmount } = installments[0]
-        return (
-          <span className="text-sm text-gray-700">
-            Cuota {installmentNumber}/{totalInstallments} · ${installmentAmount.toFixed(2)}
-          </span>
-        )
-      },
+      render: (_, row) => renderNotesCell(row),
     },
   ]
 
