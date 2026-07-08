@@ -1,6 +1,15 @@
 # SpendWise — Frontend
 
-A personal expense tracker that lets you record expenses, categorize them, track credit/debit card installments, and analyze spending through monthly reports and charts.
+SpendWise is a personal finance app to track expenses and incomes across multiple accounts. It supports expense categorization, optional notes, credit/debit card management with installment tracking, budget definition per category, and full monthly reporting with charts.
+
+Key features:
+- Multi-account support with per-account currency (ARS, USD, EUR)
+- Expense and income management with month/year filtering and pagination
+- Credit card installment tracking with per-card payment summaries
+- Budget status per category (fixed amount or range)
+- Monthly reports: category pie chart, payment method bar chart, month-over-month comparison, and income/expense ratio
+- Confirmation modal for all delete operations with inline error handling
+- Locale-aware number formatting (`es-AR`)
 
 ## Tech Stack
 
