@@ -1,12 +1,7 @@
 import { useState } from 'react'
 
 import type { ExpenseInterface, ColumnInterface } from '../../types'
-import {
-  formatCurrency,
-  formatDate,
-  getCategoryColor,
-  getPaymentMethodIcon,
-} from '../../helpers/utils'
+import { formatCurrency, formatDate, getPaymentMethodIcon } from '../../helpers/utils'
 import { Table } from './Table'
 import { DeleteModal } from '../index'
 
@@ -41,6 +36,18 @@ const renderPaymentMethodCell = (value: unknown, row: ExpenseInterface) => {
       <span>{getPaymentMethodIcon(isCard ? 'card' : method)}</span>
       <span>{label}</span>
     </div>
+  )
+}
+
+const renderCategoryCell = (value: unknown) => {
+  const category = value as { name: string; color: string }
+  return (
+    <span
+      className="px-3 py-1 rounded-full text-xs font-medium text-white"
+      style={{ backgroundColor: category.color }}
+    >
+      {category.name}
+    </span>
   )
 }
 
@@ -103,17 +110,7 @@ export const ExpensesTable = ({
       key: 'category',
       label: 'Categoría',
       width: '140px',
-      render: value => {
-        const name =
-          typeof value === 'object' && value !== null
-            ? (value as { name: string }).name
-            : (value as string)
-        return (
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(name)}`}>
-            {name}
-          </span>
-        )
-      },
+      render: value => renderCategoryCell(value),
     },
     {
       key: 'paymentMethod',
