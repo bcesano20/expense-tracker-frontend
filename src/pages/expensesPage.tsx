@@ -341,13 +341,17 @@ export const ExpensesPage = () => {
                   accountId: activeAccount.id,
                 })
               }
-              await fetchExpenses({
-                accountId: activeAccount.id,
-                month,
-                year,
-                categoryId,
-                pagination: { page, limit: 10 },
-              })
+              await Promise.all([
+                fetchExpenses({
+                  accountId: activeAccount.id,
+                  month,
+                  year,
+                  categoryId,
+                  pagination: { page, limit: 10 },
+                }),
+                fetchMonthlyReport(month, year),
+                fetchCards(),
+              ])
             }}
             loading={loading}
             currency={activeAccount.currency}
