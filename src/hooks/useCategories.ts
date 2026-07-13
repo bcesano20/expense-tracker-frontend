@@ -22,7 +22,7 @@ export const useCategories = () => {
     }
   }, [])
 
-  const createCategory = useCallback(async (data: CategoryFormInterface) => {
+  const createCategory = useCallback(async (data: Partial<CategoryFormInterface>) => {
     try {
       setLoading(true)
       setError(null)

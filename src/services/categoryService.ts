@@ -10,7 +10,7 @@ export const categoryService = {
     return response.data.data
   },
 
-  createCategory: async (data: CategoryFormInterface) => {
+  createCategory: async (data: Partial<CategoryFormInterface>) => {
     const response = await api.post<ApiResponseInterface<CategoryInterface>>(
       BACKEND_API_ENDPOINTS.CATEGORIES_API_ENDPOINT,
       data
