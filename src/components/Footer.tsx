@@ -49,6 +49,8 @@ export const Footer = () => {
         <div className="pt-8 flex justify-between items-center text-sm text-gray-400">
           <p>
             &copy; {CURRENT_YEAR} {branding.appName}. Todos los derechos reservados.
+            <br />
+            Version 1.0.0
           </p>
           <p> Desarrollado por Bruno Cesano</p>
         </div>
