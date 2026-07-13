@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react'
 
 import { MONTHS, ROUTES } from '../helpers/constants'
 import { formatCurrency } from '../helpers/utils'
-import type { BudgetInterface, CategoryInterface, ExpenseInterface } from '../types'
+import type {
+  BudgetFormInterface,
+  BudgetInterface,
+  CategoryInterface,
+  ExpenseInterface,
+} from '../types'
 import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCards } from '../hooks/useCards'
@@ -147,6 +152,79 @@ export const ExpensesPage = () => {
   const handleCreateNew = () => {
     setSelectedExpense(null)
     setShowForm(true)
+  }
+
+  // Handlers for ExpenseModal
+  const handleCloseModal = () => {
+    setShowForm(false)
+    setSelectedExpense(null)
+  }
+
+  const handleSubmitModal = async (data: Partial<ExpenseInterface>) => {
+    if (selectedExpense) {
+      await updateExpense(selectedExpense.id, data)
+    } else {
+      await createExpense({
+        ...data,
+        accountId: activeAccount.id,
+      })
+    }
+    await Promise.all([
+      fetchExpenses({
+        accountId: activeAccount.id,
+        month,
+        year,
+        categoryId,
+        pagination: { page, limit: 10 },
+      }),
+      fetchMonthlyReport(month, year),
+      fetchCards(),
+    ])
+  }
+
+  // handlers for Budget Modals
+  const handleSubmitBudgetModal = async (data: BudgetFormInterface) => {
+    if (selectedBudget) {
+      await updateBudget(selectedBudget.id, data)
+    } else {
+      await createBudget(data)
+    }
+    await fetchBudgets({ accountId: activeAccount.id, month, year })
+  }
+
+  const handleDeleteBudget = async (id: number) => {
+    await deleteBudget(id)
+    await fetchBudgets({ accountId: activeAccount.id, month, year })
+  }
+
+  const handleEditBudget = (budget: BudgetInterface) => {
+    setSelectedBudget(budget)
+    setShowBudgetsListModal(false)
+    setShowBudgetModal(true)
+  }
+
+  // handlers for Categroy Modals
+  const handleCloseCategoryModal = () => {
+    setShowCategoryModal(false)
+    setSelectedCategory(null)
+  }
+
+  const handleSubmitCategoryModal = async (data: Partial<CategoryInterface>) => {
+    if (selectedCategory) {
+      await updateCategory(selectedCategory.id, data)
+    } else {
+      await createCategory(data)
+    }
+    await Promise.all([
+      fetchCategories(),
+      fetchExpenses({
+        accountId: activeAccount.id,
+        month,
+        year,
+        categoryId,
+        pagination: { page, limit: 10 },
+      }),
+    ])
   }
 
   if (accountsLoading) {
@@ -328,31 +406,8 @@ export const ExpensesPage = () => {
             key={selectedExpense?.id ?? 'new'}
             isOpen={showForm}
             expense={selectedExpense}
-            onClose={() => {
-              setShowForm(false)
-              setSelectedExpense(null)
-            }}
-            onSubmit={async data => {
-              if (selectedExpense) {
-                await updateExpense(selectedExpense.id, data)
-              } else {
-                await createExpense({
-                  ...data,
-                  accountId: activeAccount.id,
-                })
-              }
-              await Promise.all([
-                fetchExpenses({
-                  accountId: activeAccount.id,
-                  month,
-                  year,
-                  categoryId,
-                  pagination: { page, limit: 10 },
-                }),
-                fetchMonthlyReport(month, year),
-                fetchCards(),
-              ])
-            }}
+            onClose={handleCloseModal}
+            onSubmit={handleSubmitModal}
             loading={loading}
             currency={activeAccount.currency}
             categories={categories}
@@ -379,13 +434,7 @@ export const ExpensesPage = () => {
               setShowBudgetModal(false)
               setSelectedBudget(null)
             }}
-            onSubmit={async data => {
-              if (selectedBudget) {
-                await updateBudget(selectedBudget.id, data)
-              } else {
-                await createBudget(data)
-              }
-            }}
+            onSubmit={handleSubmitBudgetModal}
             loading={budgetsLoading}
             categories={categories}
             onCreateCategory={() => {
@@ -405,31 +454,15 @@ export const ExpensesPage = () => {
           month={month}
           year={year}
           onClose={() => setShowBudgetsListModal(false)}
-          onDelete={async id => {
-            await deleteBudget(id)
-            await fetchBudgets({ accountId: activeAccount.id, month, year })
-          }}
-          onEdit={budget => {
-            setSelectedBudget(budget)
-            setShowBudgetsListModal(false)
-            setShowBudgetModal(true)
-          }}
+          onDelete={handleDeleteBudget}
+          onEdit={handleEditBudget}
         />
         <CategoryModal
           key={selectedCategory?.id ?? 'new-category'}
           isOpen={showCategoryModal}
           category={selectedCategory}
-          onClose={() => {
-            setShowCategoryModal(false)
-            setSelectedCategory(null)
-          }}
-          onSubmit={async data => {
-            if (selectedCategory) {
-              await updateCategory(selectedCategory.id, data)
-            } else {
-              await createCategory(data)
-            }
-          }}
+          onClose={handleCloseCategoryModal}
+          onSubmit={handleSubmitCategoryModal}
           loading={categoriesLoading}
         />
       </div>

@@ -74,6 +74,26 @@ export const IncomePage = () => {
     setShowForm(true)
   }
 
+  // Handlers for the Income Modals
+  const handleCloseModal = () => {
+    setShowForm(false)
+    setSelectedIncome(null)
+  }
+
+  const handleSubmitModal = async (data: IncomeFormInterface) => {
+    if (selectedIncome) {
+      await updateIncome(selectedIncome.id, data)
+    } else {
+      await createIncome({ ...data, accountId: activeAccount!.id })
+    }
+    await fetchIncomes({
+      accountId: activeAccount!.id,
+      month,
+      year,
+      pagination: { page, limit: 10 },
+    })
+  }
+
   if (accountsLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -185,23 +205,8 @@ export const IncomePage = () => {
             key={selectedIncome?.id ?? 'new'}
             isOpen={showForm}
             income={selectedIncome}
-            onClose={() => {
-              setShowForm(false)
-              setSelectedIncome(null)
-            }}
-            onSubmit={async (data: IncomeFormInterface) => {
-              if (selectedIncome) {
-                await updateIncome(selectedIncome.id, data)
-              } else {
-                await createIncome({ ...data, accountId: activeAccount.id })
-              }
-              await fetchIncomes({
-                accountId: activeAccount.id,
-                month,
-                year,
-                pagination: { page, limit: 10 },
-              })
-            }}
+            onClose={handleCloseModal}
+            onSubmit={handleSubmitModal}
             loading={loading}
           />
         )}
