@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import type { AccountInterface, CardFormInterface, CardInterface } from '../types'
 import { ROUTES } from '../helpers/constants'
+import type {
+  AccountInterface,
+  AccountServiceInterface,
+  CardFormInterface,
+  CardInterface,
+} from '../types'
 import { formatCurrency } from '../helpers/utils'
 import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
@@ -74,6 +79,7 @@ export const AccountsPage = () => {
         'Se eliminarán también todas las tarjetas y datos asociados. Esta acción no se puede deshacer.',
       onConfirm: async () => {
         await deleteAccount(id)
+        await fetchAccounts()
       },
     })
   }
@@ -94,8 +100,39 @@ export const AccountsPage = () => {
       description: 'Esta acción no se puede deshacer.',
       onConfirm: async () => {
         await deleteCard(id)
+        await fetchCards()
       },
     })
+  }
+
+  // Handlers for AccountModal
+  const handleCloseAccountModal = () => {
+    setShowAccountModal(false)
+    setSelectedAccount(null)
+  }
+
+  const handleSubmitAccountModal = async (data: AccountServiceInterface) => {
+    if (selectedAccount) {
+      await updateAccount(selectedAccount.id, data)
+    } else {
+      await createAccount(data)
+    }
+    await fetchAccounts()
+  }
+
+  // Handlers for CardModal
+  const handleCloseCardModal = () => {
+    setShowCardModal(false)
+    setSelectedCard(null)
+  }
+
+  const handleSubmitCardModal = async (data: Partial<CardFormInterface>) => {
+    if (selectedCard) {
+      await updateCard(selectedCard.id, data)
+    } else {
+      await createCard({ ...data, accountId: activeAccountId ?? 0 } as CardFormInterface)
+    }
+    await fetchCards()
   }
 
   return (
@@ -280,22 +317,13 @@ export const AccountsPage = () => {
         )}
       </div>
 
-      {/* Modales */}
+      {/* Modals */}
       <AccountModal
         key={selectedAccount?.id ?? 'new account'}
         isOpen={showAccountModal}
         account={selectedAccount}
-        onClose={() => {
-          setShowAccountModal(false)
-          setSelectedAccount(null)
-        }}
-        onSubmit={async data => {
-          if (selectedAccount) {
-            await updateAccount(selectedAccount.id, data)
-          } else {
-            await createAccount(data)
-          }
-        }}
+        onClose={handleCloseAccountModal}
+        onSubmit={handleSubmitAccountModal}
         loading={accountsLoading}
       />
 
@@ -303,17 +331,8 @@ export const AccountsPage = () => {
         key={selectedCard?.id ?? 'new card'}
         isOpen={showCardModal}
         card={selectedCard}
-        onClose={() => {
-          setShowCardModal(false)
-          setSelectedCard(null)
-        }}
-        onSubmit={async data => {
-          if (selectedCard) {
-            await updateCard(selectedCard.id, data)
-          } else {
-            await createCard({ ...data, accountId: activeAccountId ?? 0 } as CardFormInterface)
-          }
-        }}
+        onClose={handleCloseCardModal}
+        onSubmit={handleSubmitCardModal}
         loading={cardsLoading}
       />
 
