@@ -48,9 +48,9 @@ export const expensesService = {
       )
       return response.data.data
     } catch (err: unknown) {
-      const message =
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-      throw new Error(message ?? 'Error al actualizar el gasto')
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message
+      throw new Error(message ?? 'Error al actualizar el gasto', { cause: err })
     }
   },
 

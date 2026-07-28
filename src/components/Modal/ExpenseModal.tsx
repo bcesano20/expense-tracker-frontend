@@ -131,7 +131,8 @@ export const ExpenseModal = ({
       })
       onClose()
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al guardar el gasto. Intenta de nuevo.'
+      const message =
+        err instanceof Error ? err.message : 'Error al guardar el gasto. Intenta de nuevo.'
       setErrors({ submit: message })
     }
   }

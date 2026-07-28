@@ -76,8 +76,6 @@ export const useExpenses = (_accountId: number) => {
         setExpenses(prev => prev.map(expense => (expense.id === id ? updatedExpense : expense)))
       }
       return updatedExpense
-    } catch (err) {
-      throw err
     } finally {
       setLoading(false)
     }

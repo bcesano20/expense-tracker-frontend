@@ -6,7 +6,6 @@ export const formatDate = (dateString: string) => {
 export const formatCurrency = (amount: number, currency = 'ARS') =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency }).format(amount)
 
-
 export const getPaymentMethodIcon = (method: string) => {
   const icons: Record<string, string> = {
     cash: '💵',
