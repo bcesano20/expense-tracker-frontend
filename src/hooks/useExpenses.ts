@@ -77,7 +77,6 @@ export const useExpenses = (_accountId: number) => {
       }
       return updatedExpense
     } catch (err) {
-      setError(ERROR_MESSAGES.UPDATE_EXPENSE_ERROR)
       throw err
     } finally {
       setLoading(false)

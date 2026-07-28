@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { MONTHS, ROUTES } from '../helpers/constants'
 import { formatCurrency } from '../helpers/utils'
@@ -38,6 +39,7 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
 }
 
 export const ExpensesPage = () => {
+  const navigate = useNavigate()
   const [month, setMonth] = useState<number>(new Date().getMonth() + 1)
   const [year, setYear] = useState<number>(new Date().getFullYear())
   const [categoryId, setCategoryId] = useState<number | undefined>(undefined)
@@ -266,6 +268,12 @@ export const ExpensesPage = () => {
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
         <div className="mb-8">
+          <button
+            onClick={() => navigate(ROUTES.ACCOUNTS)}
+            className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition mb-4"
+          >
+            ← Volver
+          </button>
           <div className="flex justify-between items-start mb-6">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Mis Gastos</h2>
