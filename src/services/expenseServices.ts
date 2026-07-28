@@ -41,11 +41,17 @@ export const expensesService = {
   },
 
   updateExpense: async (id: number, data: Partial<ExpenseInterface>) => {
-    const response = await api.put<ApiResponseInterface<ExpenseInterface>>(
-      `${BACKEND_API_ENDPOINTS.EXPENSE_BASIC_API_ROUTE}/${id}`,
-      data
-    )
-    return response.data.data
+    try {
+      const response = await api.put<ApiResponseInterface<ExpenseInterface>>(
+        `${BACKEND_API_ENDPOINTS.EXPENSE_BASIC_API_ROUTE}/${id}`,
+        data
+      )
+      return response.data.data
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      throw new Error(message ?? 'Error al actualizar el gasto')
+    }
   },
 
   deleteExpense: async (id: number) => {
