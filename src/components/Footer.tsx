@@ -50,7 +50,7 @@ export const Footer = () => {
           <p>
             &copy; {CURRENT_YEAR} {branding.appName}. Todos los derechos reservados.
             <br />
-            Version 1.0.0
+            Version 1.1.0
           </p>
           <p> Desarrollado por Bruno Cesano</p>
         </div>

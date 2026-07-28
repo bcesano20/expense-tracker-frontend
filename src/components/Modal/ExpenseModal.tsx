@@ -130,8 +130,10 @@ export const ExpenseModal = ({
         ...(showInstallments && { totalInstallments: installmentsCount }),
       })
       onClose()
-    } catch {
-      setErrors({ submit: 'Error al guardar el gasto. Intenta de nuevo.' })
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Error al guardar el gasto. Intenta de nuevo.'
+      setErrors({ submit: message })
     }
   }
 
