@@ -33,10 +33,8 @@ export const useMonthlyReport = (accountId: number) => {
         setComparativeError(null)
         const data = await reportsService.getComparative(accountId, month, year)
         setComparative(data ?? null)
-      } catch (err) {
+      } catch {
         setComparativeError(ERROR_MESSAGES.COMPARISION_ERROR)
-        // eslint-disable-next-line no-console
-        console.error(err)
       }
     },
     [accountId]

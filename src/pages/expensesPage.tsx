@@ -372,6 +372,38 @@ export const ExpensesPage = () => {
           )
         })()}
 
+        {/* Dynamic Card for Total Spent by category in a current month */}
+        {categoryId !== undefined &&
+          (() => {
+            const category = categories.find(cat => cat.id === categoryId)
+            const categoryReport = monthlyReport?.expensesByCategory?.find(
+              e => e.category === category?.name
+            )
+            if (!category) return null
+            return (
+              <div className="mb-8 bg-white p-4 rounded-lg shadow">
+                <div className="flex items-center gap-2 mb-3">
+                  <span
+                    className="w-3 h-3 rounded-full shrink-0"
+                    style={{ backgroundColor: category.color }}
+                  />
+                  <p className="text-sm font-semibold text-gray-700">{category.name}</p>
+                  <span className="text-xs text-gray-400">
+                    — {monthName} {year}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Total gastado</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {formatCurrency(categoryReport?.total ?? 0, activeAccount.currency)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
+
         {/* Expenses table */}
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Detalle de Gastos</h3>
