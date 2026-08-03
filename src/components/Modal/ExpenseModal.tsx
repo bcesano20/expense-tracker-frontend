@@ -17,6 +17,8 @@ interface ExpenseModalProps {
   currency?: string
 }
 
+const INSTALLMENTS_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18]
+
 const DEFAULT_EXPENSE_FORM: Partial<ExpenseInterface> = {
   description: '',
   amount: 0,
@@ -288,7 +290,7 @@ export const ExpenseModal = ({
                 value={installmentsCount}
                 onChange={e => setInstallmentsCount(parseInt(e.target.value))}
               >
-                {[1, 2, 3, 4, 6, 9, 12].map(num => (
+                {INSTALLMENTS_NUMBERS.map(num => (
                   <option key={num} value={num}>
                     {num} cuota{num > 1 ? 's' : ''}
                   </option>
