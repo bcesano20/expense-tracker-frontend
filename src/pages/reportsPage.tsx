@@ -151,7 +151,7 @@ export const ReportsPage = () => {
                 <p className="text-3xl font-bold text-red-600">
                   {formatCurrency(report.totalCardPayments ?? 0, activeAccount?.currency)}
                 </p>
-                <p className="text-xs text-gray-500 mt-2">En tarjetas</p>
+                <p className="text-xs text-gray-500 mt-2">En tarjetas de crédito</p>
               </div>
             </div>
 
