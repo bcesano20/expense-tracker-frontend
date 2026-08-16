@@ -71,6 +71,7 @@ export const ERROR_MESSAGES = {
   REGISTER_ERROR: 'Error al registrarse',
   MONTHLY_REPORT_ERROR: 'Error al cargar el reporte mensual',
   COMPARISION_ERROR: 'Error al obtener la comparativa',
+  CARD_DETAIL_ERROR: 'Error al obtener los detalles de las tarjetas de credito a pagar este mes',
   ACCOUNTS_LOAD_ERROR: 'Error al traer cuentas',
   CREATE_ACCOUNT_ERROR: 'Error al crear una cuenta',
   UPDATE_ACCOUNT_ERROR: 'Error al actualizar la cuenta',

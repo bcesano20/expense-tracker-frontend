@@ -121,7 +121,7 @@ export const ReportsPage = () => {
         {/* Summary */}
         {report && !loading && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               {/* Total Expended */}
               <div className="bg-white p-6 rounded-lg shadow">
                 <p className="text-sm text-gray-600 mb-2">Total Gastado</p>
@@ -143,15 +143,6 @@ export const ReportsPage = () => {
                 <p className="text-sm text-gray-600 mb-2">Tarjetas Usadas</p>
                 <p className="text-3xl font-bold text-gray-900">{report.summary.cardCount}</p>
                 <p className="text-xs text-gray-500 mt-2">Con transacciones</p>
-              </div>
-
-              {/* To Pay */}
-              <div className="bg-white p-6 rounded-lg shadow">
-                <p className="text-sm text-gray-600 mb-2">Total a Pagar</p>
-                <p className="text-3xl font-bold text-red-600">
-                  {formatCurrency(report.totalCardPayments ?? 0, activeAccount?.currency)}
-                </p>
-                <p className="text-xs text-gray-500 mt-2">En tarjetas de crédito</p>
               </div>
             </div>
 

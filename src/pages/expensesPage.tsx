@@ -404,6 +404,39 @@ export const ExpensesPage = () => {
             )
           })()}
 
+        {/* Dynamic Card for Total Spent by PaymentMethod in a current month */}
+        {paymentMethod !== '' &&
+          (() => {
+            const isCardSubtype = paymentMethod === 'card-credit' || paymentMethod === 'card-debit'
+            const methodReport = monthlyReport?.expensesByPaymentMethod?.find(
+              e => e.method === (isCardSubtype ? 'card' : paymentMethod)
+            )
+            const total = isCardSubtype
+              ? paymentMethod === 'card-credit'
+                ? (monthlyReport?.totalCardPaymentsByType?.credit ?? 0)
+                : (monthlyReport?.totalCardPaymentsByType?.debit ?? 0)
+              : (methodReport?.total ?? 0)
+            const methodLabel = PAYMENT_METHOD_LABELS[paymentMethod] ?? paymentMethod
+            return (
+              <div className="mb-8 bg-white p-4 rounded-lg shadow">
+                <div className="flex items-center gap-2 mb-3">
+                  <p className="text-sm font-semibold text-gray-700">{methodLabel}</p>
+                  <span className="text-xs text-gray-400">
+                    — {monthName} {year}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Total gastado</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {formatCurrency(total, activeAccount.currency)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
+
         {/* Expenses table */}
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Detalle de Gastos</h3>

@@ -237,6 +237,7 @@ export interface MonthlyReportDataInterface {
   expenseDetails: ExpenseDetailInterface[]
   cardsToPay: CardToPayInterface[]
   totalCardPayments: number
+  totalCardPaymentsByType: { credit: number; debit: number }
 }
 
 // For budget status report
