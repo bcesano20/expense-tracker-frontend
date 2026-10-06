@@ -26,6 +26,7 @@ export const AccountsPage = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<{
     title: string
     description: string
+    cancelText?: string
     onConfirm: () => Promise<void>
   } | null>(null)
 
@@ -48,6 +49,7 @@ export const AccountsPage = () => {
     createCard,
     updateCard,
     deleteCard,
+    cancelCard,
   } = useCards(activeAccountId)
 
   // Load accounts on mount
@@ -100,6 +102,18 @@ export const AccountsPage = () => {
       description: 'Esta acción no se puede deshacer.',
       onConfirm: async () => {
         await deleteCard(id)
+        await fetchCards()
+      },
+    })
+  }
+
+  const handleCancelCard = (id: number) => {
+    setDeleteConfirm({
+      title: '¿Deseas desactivar esta tarjeta?',
+      description: 'Esta acción no se puede deshacer.',
+      cancelText: 'Desactivar',
+      onConfirm: async () => {
+        await cancelCard(id)
         await fetchCards()
       },
     })
@@ -291,6 +305,12 @@ export const AccountsPage = () => {
                       >
                         🗑️ Eliminar
                       </button>
+                      <button
+                        onClick={() => handleCancelCard(card.id)}
+                        className="flex-1 px-3 py-1 bg-red-200 text-white rounded hover:bg-red-300 text-sm"
+                      >
+                        ❌ Desactivar
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -340,6 +360,7 @@ export const AccountsPage = () => {
         isOpen={deleteConfirm !== null}
         title={deleteConfirm?.title ?? ''}
         description={deleteConfirm?.description}
+        cancelText={deleteConfirm?.cancelText}
         onConfirm={deleteConfirm?.onConfirm ?? (async () => {})}
         onClose={() => setDeleteConfirm(null)}
       />

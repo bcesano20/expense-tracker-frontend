@@ -7,6 +7,7 @@ interface DeleteModalProps {
   isOpen: boolean
   title: string
   description?: string
+  cancelText?: string
   onConfirm: () => Promise<void>
   onClose: () => void
 }
@@ -15,6 +16,7 @@ export const DeleteModal = ({
   isOpen,
   title,
   description,
+  cancelText = 'Eliminar',
   onConfirm,
   onClose,
 }: DeleteModalProps) => {
@@ -57,7 +59,7 @@ export const DeleteModal = ({
             Cancelar
           </Button>
           <Button variant="danger" loading={loading} onClick={handleConfirm}>
-            Eliminar
+            {cancelText}
           </Button>
         </div>
       </div>

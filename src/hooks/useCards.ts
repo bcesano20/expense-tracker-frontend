@@ -14,7 +14,7 @@ export const useCards = (accountId: number) => {
     try {
       setLoading(true)
       setError(null)
-      const data = await cardsService.getCardsByAccount(accountId)
+      const data = await cardsService.getCardsByAccount(accountId, true)
       setCards(data)
     } catch {
       setError(ERROR_MESSAGES.GET_CARDS_ERROR)
@@ -70,6 +70,19 @@ export const useCards = (accountId: number) => {
     }
   }, [])
 
+  const cancelCard = useCallback(async (id: number) => {
+    try {
+      setLoading(true)
+      setError(null)
+      await cardsService.cancelCard(id)
+      setCards(prev => prev.filter(card => card.id !== id))
+    } catch {
+      setError(ERROR_MESSAGES.CANCEL_CARD_ERROR)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
   return {
     cards,
     loading,
@@ -78,5 +91,6 @@ export const useCards = (accountId: number) => {
     createCard,
     updateCard,
     deleteCard,
+    cancelCard,
   }
 }

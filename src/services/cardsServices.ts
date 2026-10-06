@@ -3,9 +3,10 @@ import type { CardInterface, CardFormInterface, ApiResponseInterface } from '../
 import api from './api'
 
 export const cardsService = {
-  getCardsByAccount: async (accountId: number) => {
+  getCardsByAccount: async (accountId: number, onlyActive = false) => {
     const response = await api.get<ApiResponseInterface<CardInterface[]>>(
-      `${BACKEND_API_ENDPOINTS.GET_CARDS_ACCOUNT}/${accountId}`
+      `${BACKEND_API_ENDPOINTS.GET_CARDS_ACCOUNT}/${accountId}`,
+      { params: onlyActive ? { active: true } : undefined }
     )
     return response.data.data || []
   },
@@ -28,5 +29,9 @@ export const cardsService = {
 
   deleteCard: async (id: number) => {
     await api.delete(`${BACKEND_API_ENDPOINTS.CARDS_API_ENDPOINT}/${id}`)
+  },
+
+  cancelCard: async (id: number) => {
+    await api.patch(`${BACKEND_API_ENDPOINTS.CARDS_API_ENDPOINT}/${id}/cancel`)
   },
 }
