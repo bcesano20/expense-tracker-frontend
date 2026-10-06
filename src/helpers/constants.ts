@@ -93,6 +93,7 @@ export const ERROR_MESSAGES = {
   UPDATE_BUDGET_ERROR: 'Error al actualizar el presupuesto',
   DELETE_BUDGET_ERROR: 'Error al eliminar el presupuesto',
   DELETE_GENERIC_ERROR: 'No se pudo eliminar. Intentá de nuevo.',
+  CANCEL_CARD_ERROR: 'Error al cancelar la tarjet',
 }
 
 export const MONTHS = [
