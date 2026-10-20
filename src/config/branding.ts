@@ -4,8 +4,8 @@ export const branding = {
   description:
     'La herramienta perfecta para controlar tus gastos personales con análisis detallados y reportes visuales.',
 
-  // URLs - TODO: Update
-  appUrl: 'DEPLOY_URL',
+  // URLs
+  appUrl: 'https://spendwise-bruno-cesanos-projects.vercel.app/',
   supportEmail: 'brunocesano20@gmail.com',
   github: 'https://github.com/bcesano20',
 
@@ -15,12 +15,5 @@ export const branding = {
     success: '#10B981',
     warning: '#F59E0B',
     danger: '#EF4444',
-  },
-
-  // Texto legal
-  legal: {
-    privacy: '/privacy',
-    terms: '/terms',
-    cookie: '/cookies',
   },
 }
