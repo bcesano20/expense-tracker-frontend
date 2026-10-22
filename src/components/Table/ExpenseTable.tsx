@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import type { ExpenseInterface, ColumnInterface } from '../../types'
+import type { ExpenseInterface, ColumnInterface, PaymentMethod } from '../../types'
 import { formatCurrency, formatDate, getPaymentMethodIcon } from '../../helpers/utils'
 import { Table } from './Table'
 import { DeleteModal } from '../index'
@@ -14,26 +14,20 @@ interface ExpensesTableProps {
   currency?: string
 }
 
-const renderPaymentMethodCell = (value: unknown, row: ExpenseInterface) => {
-  const method = value as string
-  const isCard = method.startsWith('card')
-  const cardType = row.card?.card?.type
-  const LABELS: Record<string, string> = {
-    cash: 'Efectivo',
-    transfer: 'Transferencia',
-    other: 'Otro',
+const renderPaymentMethodCell = (value: unknown) => {
+  const method = value as PaymentMethod
+  const LABELS: Record<PaymentMethod, string> = {
+    CASH: 'Efectivo',
+    CREDIT: 'Crédito',
+    DEBIT: 'Débito',
+    TRANSFER: 'Transferencia',
+    OTHER: 'Otro',
   }
-  const label = isCard
-    ? cardType === 'credit'
-      ? 'Crédito'
-      : cardType === 'debit'
-        ? 'Débito'
-        : 'Tarjeta'
-    : (LABELS[method] ?? method)
+  const label = LABELS[method] ?? method
 
   return (
     <div className="flex items-center gap-2">
-      <span>{getPaymentMethodIcon(isCard ? 'card' : method)}</span>
+      <span>{getPaymentMethodIcon(method)}</span>
       <span>{label}</span>
     </div>
   )
@@ -116,7 +110,7 @@ export const ExpensesTable = ({
       key: 'paymentMethod',
       label: 'Medio de Pago',
       width: '140px',
-      render: (value, row) => renderPaymentMethodCell(value, row),
+      render: value => renderPaymentMethodCell(value),
     },
     {
       key: 'installments',
