@@ -8,10 +8,11 @@ export const formatCurrency = (amount: number, currency = 'ARS') =>
 
 export const getPaymentMethodIcon = (method: string) => {
   const icons: Record<string, string> = {
-    cash: '💵',
-    card: '💳',
-    transfer: '🏦',
-    other: '📱',
+    CASH: '💵',
+    CREDIT: '💳',
+    DEBIT: '💳',
+    TRANSFER: '🏦',
+    OTHER: '📱',
   }
   return icons[method] || '❓'
 }
