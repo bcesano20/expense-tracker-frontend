@@ -20,6 +20,15 @@ export interface AccountInterface {
   updatedAt: string
 }
 
+// Answer of every wallet endpoint. The total is calculated by the backend
+export interface WalletSummaryInterface {
+  accountId: number
+  hasWallet: boolean
+  walletBalance: number | null
+  debitBalance: number
+  totalBalance: number
+}
+
 export interface CardInterface {
   id: number
   name: string
