@@ -30,8 +30,15 @@ export const BACKEND_API_ENDPOINTS = {
   // INCOMES
   INCOMES_API_ENDPOINT: '/incomes',
 
-  //BUDGETS
+  // BUDGETS
   BUDGETS_API_ENDPOINT: '/budgets',
+
+  // WALLETS
+  WALLET_API_ENDPOINT: '/wallets/account',
+
+  // INSTALLMENTS
+  INSTALLMENTS_DUE_ENDPOINT: '/installments/due',
+  INSTALLMENTS_PAY_ENDPOINT: '/installments/pay',
 }
 
 export const ROUTES = {
@@ -48,6 +55,7 @@ export const ROUTES = {
 export const REGEXP = {
   EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   PASSWORD_REGEX: /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/,
+  AMOUNT_REGEX: /^\d{1,10}(\.\d{1,2})?$/, // Same limits as the Decimal(12, 2) columns of the backend
 }
 
 export const ERROR_MESSAGES = {
@@ -60,7 +68,6 @@ export const ERROR_MESSAGES = {
   EXPENSE_GET_ERROR: 'Error al recuperar el gasto',
   CREATE_EXPENSE_ERROR: 'Error al crear el gasto',
   UPDATE_EXPENSE_ERROR: 'Error al actualizar el gasto',
-  DELETE_EXPENSE_ERROR: 'Error al eliminar el gasto',
   INCOMES_LOAD_ERROR: 'Error al cargar los ingresos',
   INCOME_GET_ERROR: 'Error al recuperar el ingreso',
   CREATE_INCOME_ERROR: 'Error al crear el ingreso',
@@ -94,6 +101,12 @@ export const ERROR_MESSAGES = {
   DELETE_BUDGET_ERROR: 'Error al eliminar el presupuesto',
   DELETE_GENERIC_ERROR: 'No se pudo eliminar. Intentá de nuevo.',
   CANCEL_CARD_ERROR: 'Error al cancelar la tarjet',
+  WALLET_LOAD_ERROR: 'Error al cargar la billetera',
+  WALLET_CREATE_ERROR: 'Error al crear la billetera',
+  WALLET_UPDATE_ERROR: 'Error al actualizar el saldo de la billetera',
+  AMOUNT_FORMAT_ERROR: 'Ingresá un monto válido (hasta 10 dígitos y 2 decimales)',
+  INSTALLMENTS_LOAD_ERROR: 'Error al cargar las cuotas vencidas',
+  PAY_INSTALLMENTS_ERROR: 'Error al pagar las cuotas. Intenta de nuevo',
 }
 
 export const MONTHS = [

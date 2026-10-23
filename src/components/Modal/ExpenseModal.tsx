@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import type { CardInterface, CategoryInterface, ExpenseInterface } from '../../types'
+import type { CardInterface, CategoryInterface, ExpenseInterface, PaymentMethod } from '../../types'
 import { Button, Input, Select, Textarea } from '../index'
 import { formatCurrency } from '../../helpers/utils'
 
@@ -24,7 +24,7 @@ const DEFAULT_EXPENSE_FORM: Partial<ExpenseInterface> = {
   amount: 0,
   date: new Date().toISOString().split('T')[0],
   categoryId: undefined,
-  paymentMethod: 'cash',
+  paymentMethod: 'CASH',
   notes: '',
 }
 
@@ -40,16 +40,11 @@ export const ExpenseModal = ({
   onEditCategory,
   currency,
 }: ExpenseModalProps) => {
-  const normalizedPaymentMethod = expense?.paymentMethod?.startsWith('card')
-    ? 'card'
-    : (expense?.paymentMethod ?? 'cash')
-
   const [formData, setFormData] = useState<Partial<ExpenseInterface>>(
     expense
       ? {
           ...DEFAULT_EXPENSE_FORM,
           ...expense,
-          paymentMethod: normalizedPaymentMethod,
           date: expense.date.split('T')[0],
         }
       : DEFAULT_EXPENSE_FORM
@@ -62,13 +57,16 @@ export const ExpenseModal = ({
   )
 
   const selectedCard = cards.find(c => c.id === selectedCardId) ?? null
-  const showInstallments = formData.paymentMethod === 'card' && selectedCard?.type === 'credit'
+  const isCardMethod = formData.paymentMethod === 'CREDIT' || formData.paymentMethod === 'DEBIT'
+  const availableCards = cards.filter(c => c.type === formData.paymentMethod?.toLowerCase())
+  const showInstallments = formData.paymentMethod === 'CREDIT' && selectedCard?.type === 'credit'
 
-  const paymentMethods = [
-    { value: 'cash', label: '💵 Efectivo' },
-    { value: 'card', label: '💳 Tarjeta' },
-    { value: 'transfer', label: '🏦 Transferencia' },
-    { value: 'other', label: '📱 Otro' },
+  const paymentMethods: { value: PaymentMethod; label: string }[] = [
+    { value: 'CASH', label: '💵 Efectivo' },
+    { value: 'CREDIT', label: '💳 Crédito' },
+    { value: 'DEBIT', label: '💳 Débito' },
+    { value: 'TRANSFER', label: '🏦 Transferencia' },
+    { value: 'OTHER', label: '📱 Otro' },
   ]
 
   const validateForm = () => {
@@ -86,7 +84,7 @@ export const ExpenseModal = ({
     if (!formData.categoryId) {
       newErrors.category = 'La categoría es requerida'
     }
-    if (formData.paymentMethod === 'card' && !selectedCardId) {
+    if (isCardMethod && !selectedCardId) {
       newErrors.card = 'Seleccioná una tarjeta'
     }
     if (
@@ -115,7 +113,7 @@ export const ExpenseModal = ({
   }
 
   const handlePaymentMethodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData(prev => ({ ...prev, paymentMethod: e.target.value }))
+    setFormData(prev => ({ ...prev, paymentMethod: e.target.value as PaymentMethod }))
     setSelectedCardId(undefined)
   }
 
@@ -157,10 +155,6 @@ export const ExpenseModal = ({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {errors.submit && (
-            <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm">{errors.submit}</div>
-          )}
-
           <Input
             label="Descripción *"
             type="text"
@@ -246,7 +240,7 @@ export const ExpenseModal = ({
           <Select
             label="Medio de Pago *"
             name="paymentMethod"
-            value={formData.paymentMethod || 'cash'}
+            value={formData.paymentMethod || 'CASH'}
             onChange={handlePaymentMethodChange}
           >
             {paymentMethods.map(method => (
@@ -256,7 +250,7 @@ export const ExpenseModal = ({
             ))}
           </Select>
 
-          {formData.paymentMethod === 'card' && (
+          {isCardMethod && (
             <div className="space-y-1">
               <Select
                 label="Tarjeta *"
@@ -269,7 +263,7 @@ export const ExpenseModal = ({
                 error={errors.card}
               >
                 <option value="">Seleccioná una tarjeta</option>
-                {cards.map(card => (
+                {availableCards.map(card => (
                   <option key={card.id} value={String(card.id)}>
                     {card.name} — {card.bank} ({card.type === 'credit' ? 'Crédito' : 'Débito'})
                   </option>
@@ -311,6 +305,10 @@ export const ExpenseModal = ({
             onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
             placeholder="Agregá una nota adicional sobre este gasto..."
           />
+
+          {errors.submit && (
+            <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm">{errors.submit}</div>
+          )}
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="secondary" onClick={onClose} className="flex-1">

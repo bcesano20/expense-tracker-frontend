@@ -12,7 +12,8 @@ import { formatCurrency } from '../helpers/utils'
 import { useAuth } from '../hooks/useAuth'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCards } from '../hooks/useCards'
-import { Button, Navbar, AccountModal, CardModal, DeleteModal } from '../components'
+import { useWallet } from '../hooks/useWallet'
+import { Button, Navbar, AccountModal, CardModal, DeleteModal, WalletModal } from '../components'
 
 export const AccountsPage = () => {
   const { state, setActiveAccount } = useAuth()
@@ -23,6 +24,7 @@ export const AccountsPage = () => {
   const [selectedAccount, setSelectedAccount] = useState<AccountInterface | null>(null)
   const [showCardModal, setShowCardModal] = useState<boolean>(false)
   const [selectedCard, setSelectedCard] = useState<CardInterface | null>(null)
+  const [showWalletModal, setShowWalletModal] = useState<boolean>(false)
   const [deleteConfirm, setDeleteConfirm] = useState<{
     title: string
     description: string
@@ -52,6 +54,15 @@ export const AccountsPage = () => {
     cancelCard,
   } = useCards(activeAccountId)
 
+  const {
+    walletSummary,
+    loading: walletLoading,
+    error: walletError,
+    fetchWallet,
+    createWallet,
+    updateWalletBalance,
+  } = useWallet(activeAccountId)
+
   // Load accounts on mount
   useEffect(() => {
     fetchAccounts()
@@ -63,6 +74,13 @@ export const AccountsPage = () => {
       fetchCards()
     }
   }, [activeAccountId, fetchCards])
+
+  // Load the wallet when the account change
+  useEffect(() => {
+    if (activeAccountId) {
+      fetchWallet()
+    }
+  }, [activeAccountId, fetchWallet])
 
   const handleCreateAccount = () => {
     setSelectedAccount(null)
@@ -86,6 +104,13 @@ export const AccountsPage = () => {
     })
   }
 
+  // The wallet modal shows the active account, so the account of the card becomes the active one
+  const handleOpenWallet = (accountId: number) => {
+    setSelectedAccountId(accountId)
+    setActiveAccount(accountId)
+    setShowWalletModal(true)
+  }
+
   const handleCreateCard = () => {
     setSelectedCard(null)
     setShowCardModal(true)
@@ -102,7 +127,7 @@ export const AccountsPage = () => {
       description: 'Esta acción no se puede deshacer.',
       onConfirm: async () => {
         await deleteCard(id)
-        await fetchCards()
+        await Promise.all([fetchCards(), fetchWallet()])
       },
     })
   }
@@ -114,7 +139,7 @@ export const AccountsPage = () => {
       cancelText: 'Desactivar',
       onConfirm: async () => {
         await cancelCard(id)
-        await fetchCards()
+        await Promise.all([fetchCards(), fetchWallet()])
       },
     })
   }
@@ -146,7 +171,7 @@ export const AccountsPage = () => {
     } else {
       await createCard({ ...data, accountId: activeAccountId ?? 0 } as CardFormInterface)
     }
-    await fetchCards()
+    await Promise.all([fetchCards(), fetchWallet()])
   }
 
   return (
@@ -170,7 +195,7 @@ export const AccountsPage = () => {
           <p className="text-gray-600">Gestiona tus cuentas y métodos de pago</p>
         </div>
 
-        {/* Cuentas */}
+        {/* Accounts */}
         <div className="mb-8">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">Mis Cuentas</h3>
 
@@ -225,6 +250,16 @@ export const AccountsPage = () => {
                       </button>
                     </div>
                   </div>
+
+                  <Button
+                    onClick={e => {
+                      e.stopPropagation()
+                      handleOpenWallet(account.id)
+                    }}
+                    className="w-full"
+                  >
+                    Ver la billetera de la Cuenta
+                  </Button>
                 </div>
               ))}
             </div>
@@ -354,6 +389,19 @@ export const AccountsPage = () => {
         onClose={handleCloseCardModal}
         onSubmit={handleSubmitCardModal}
         loading={cardsLoading}
+      />
+
+      <WalletModal
+        key={activeAccountId ?? 'no account'}
+        isOpen={showWalletModal}
+        accountName={accounts.find(a => a.id === activeAccountId)?.name}
+        currency={accounts.find(a => a.id === activeAccountId)?.currency}
+        summary={walletSummary?.accountId === activeAccountId ? walletSummary : null}
+        onClose={() => setShowWalletModal(false)}
+        onCreate={createWallet}
+        onUpdateBalance={updateWalletBalance}
+        loading={walletLoading}
+        loadError={walletError}
       />
 
       <DeleteModal

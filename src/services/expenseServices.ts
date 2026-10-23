@@ -1,6 +1,7 @@
 import api from './api'
 
-import { BACKEND_API_ENDPOINTS } from '../helpers/constants'
+import { BACKEND_API_ENDPOINTS, ERROR_MESSAGES } from '../helpers/constants'
+import { rethrowWithApiMessage } from '../helpers/utils'
 import type { GetExpenseRequestInterface, ExpenseInterface, ApiResponseInterface } from '../types'
 
 export const expensesService = {
@@ -33,11 +34,15 @@ export const expensesService = {
   },
 
   createExpense: async (data: Partial<ExpenseInterface>) => {
-    const response = await api.post<ApiResponseInterface<ExpenseInterface>>(
-      BACKEND_API_ENDPOINTS.EXPENSE_BASIC_API_ROUTE,
-      data
-    )
-    return response.data.data
+    try {
+      const response = await api.post<ApiResponseInterface<ExpenseInterface>>(
+        BACKEND_API_ENDPOINTS.EXPENSE_BASIC_API_ROUTE,
+        data
+      )
+      return response.data.data
+    } catch (err: unknown) {
+      return rethrowWithApiMessage(err, ERROR_MESSAGES.CREATE_EXPENSE_ERROR)
+    }
   },
 
   updateExpense: async (id: number, data: Partial<ExpenseInterface>) => {
@@ -48,9 +53,7 @@ export const expensesService = {
       )
       return response.data.data
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data
-        ?.message
-      throw new Error(message ?? 'Error al actualizar el gasto', { cause: err })
+      return rethrowWithApiMessage(err, ERROR_MESSAGES.UPDATE_EXPENSE_ERROR)
     }
   },
 

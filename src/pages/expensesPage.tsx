@@ -31,11 +31,11 @@ import {
 } from '../components'
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
-  cash: 'Efectivo',
-  'card-credit': 'Crédito',
-  'card-debit': 'Débito',
-  transfer: 'Transferencia',
-  other: 'Otro',
+  CASH: 'Efectivo',
+  CREDIT: 'Crédito',
+  DEBIT: 'Débito',
+  TRANSFER: 'Transferencia',
+  OTHER: 'Otro',
 }
 
 export const ExpensesPage = () => {
@@ -119,12 +119,6 @@ export const ExpensesPage = () => {
 
   const filteredExpenses = expenses.filter(expense => {
     if (!paymentMethod) return true
-    if (paymentMethod === 'card-credit') {
-      return expense.paymentMethod.startsWith('card') && expense.card?.card?.type === 'credit'
-    }
-    if (paymentMethod === 'card-debit') {
-      return expense.paymentMethod.startsWith('card') && expense.card?.card?.type === 'debit'
-    }
     return expense.paymentMethod === paymentMethod
   })
 
@@ -407,12 +401,12 @@ export const ExpensesPage = () => {
         {/* Dynamic Card for Total Spent by PaymentMethod in a current month */}
         {paymentMethod !== '' &&
           (() => {
-            const isCardSubtype = paymentMethod === 'card-credit' || paymentMethod === 'card-debit'
+            const isCardSubtype = paymentMethod === 'CREDIT' || paymentMethod === 'DEBIT'
             const methodReport = monthlyReport?.expensesByPaymentMethod?.find(
-              e => e.method === (isCardSubtype ? 'card' : paymentMethod)
+              e => e.method === paymentMethod
             )
             const total = isCardSubtype
-              ? paymentMethod === 'card-credit'
+              ? paymentMethod === 'CREDIT'
                 ? (monthlyReport?.totalCardPaymentsByType?.credit ?? 0)
                 : (monthlyReport?.totalCardPaymentsByType?.debit ?? 0)
               : (methodReport?.total ?? 0)

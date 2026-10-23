@@ -10,12 +10,16 @@ const api: AxiosInstance = axios.create({
   },
 })
 
-// Add the token in each request
+// The server clock is UTC: this is how it knows what "the current month" is for the user
+const TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+// Add the token and the timezone in each request
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  config.headers['X-Timezone'] = TIME_ZONE
   return config
 })
 

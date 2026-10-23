@@ -20,6 +20,33 @@ export interface AccountInterface {
   updatedAt: string
 }
 
+// Answer of every wallet endpoint. The total is calculated by the backend
+export interface WalletSummaryInterface {
+  accountId: number
+  hasWallet: boolean
+  walletBalance: number | null
+  debitBalance: number
+  totalBalance: number
+}
+
+// Overdue installments of an account: the ones whose payment month is before the current month
+// of the user's timezone (`month`/`year`)
+export interface DueInstallmentsInterface {
+  count: number
+  // The exact Decimal string sent by the backend: it's echoed back as `expectedTotal` when paying
+  total: string
+  month: number
+  year: number
+  timeZone: string
+}
+
+export interface PayInstallmentsResultInterface {
+  paidCount: number
+  total: string
+  // false when the account has no wallet: the installments were only marked as paid
+  walletApplied: boolean
+}
+
 export interface CardInterface {
   id: number
   name: string
@@ -43,6 +70,8 @@ export interface CardFormInterface {
   accountId: number
 }
 
+export type PaymentMethod = 'CASH' | 'TRANSFER' | 'DEBIT' | 'CREDIT' | 'OTHER'
+
 export interface ExpenseInterface {
   id: number
   description: string
@@ -51,7 +80,7 @@ export interface ExpenseInterface {
   category: string | CategoryInterface
   categoryId?: number
   cardId?: number
-  paymentMethod: string
+  paymentMethod: PaymentMethod
   billingMonth: number
   billingYear: number
   accountId: number
@@ -205,7 +234,7 @@ export interface ExpenseDetailInterface {
   amount: number
   date: string
   category: string
-  paymentMethod: string
+  paymentMethod: PaymentMethod
   card: string | null
 }
 
