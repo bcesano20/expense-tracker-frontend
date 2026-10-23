@@ -35,6 +35,10 @@ export const BACKEND_API_ENDPOINTS = {
 
   // WALLETS
   WALLET_API_ENDPOINT: '/wallets/account',
+
+  // INSTALLMENTS
+  INSTALLMENTS_DUE_ENDPOINT: '/installments/due',
+  INSTALLMENTS_PAY_ENDPOINT: '/installments/pay',
 }
 
 export const ROUTES = {
@@ -101,6 +105,8 @@ export const ERROR_MESSAGES = {
   WALLET_CREATE_ERROR: 'Error al crear la billetera',
   WALLET_UPDATE_ERROR: 'Error al actualizar el saldo de la billetera',
   AMOUNT_FORMAT_ERROR: 'Ingresá un monto válido (hasta 10 dígitos y 2 decimales)',
+  INSTALLMENTS_LOAD_ERROR: 'Error al cargar las cuotas vencidas',
+  PAY_INSTALLMENTS_ERROR: 'Error al pagar las cuotas. Intenta de nuevo',
 }
 
 export const MONTHS = [

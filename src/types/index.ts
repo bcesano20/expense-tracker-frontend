@@ -29,6 +29,24 @@ export interface WalletSummaryInterface {
   totalBalance: number
 }
 
+// Overdue installments of an account: the ones whose payment month is before the current month
+// of the user's timezone (`month`/`year`)
+export interface DueInstallmentsInterface {
+  count: number
+  // The exact Decimal string sent by the backend: it's echoed back as `expectedTotal` when paying
+  total: string
+  month: number
+  year: number
+  timeZone: string
+}
+
+export interface PayInstallmentsResultInterface {
+  paidCount: number
+  total: string
+  // false when the account has no wallet: the installments were only marked as paid
+  walletApplied: boolean
+}
+
 export interface CardInterface {
   id: number
   name: string
