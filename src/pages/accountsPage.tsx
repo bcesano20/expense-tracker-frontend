@@ -374,7 +374,7 @@ export const AccountsPage = () => {
 
       {/* Modals */}
       <AccountModal
-        key={selectedAccount?.id ?? 'new account'}
+        key={`account-${selectedAccount?.id ?? 'new'}`}
         isOpen={showAccountModal}
         account={selectedAccount}
         onClose={handleCloseAccountModal}
@@ -383,7 +383,7 @@ export const AccountsPage = () => {
       />
 
       <CardModal
-        key={selectedCard?.id ?? 'new card'}
+        key={`card-${selectedCard?.id ?? 'new'}`}
         isOpen={showCardModal}
         card={selectedCard}
         onClose={handleCloseCardModal}
@@ -392,7 +392,7 @@ export const AccountsPage = () => {
       />
 
       <WalletModal
-        key={activeAccountId ?? 'no account'}
+        key={`wallet-${activeAccountId ?? 'none'}`}
         isOpen={showWalletModal}
         accountName={accounts.find(a => a.id === activeAccountId)?.name}
         currency={accounts.find(a => a.id === activeAccountId)?.currency}
