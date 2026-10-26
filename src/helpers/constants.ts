@@ -1,3 +1,5 @@
+import type { ClosingBlockReason } from '../types'
+
 export const BACKEND_API_ENDPOINTS = {
   // AUTH
   REGISTER: '/auth/register',
@@ -39,6 +41,10 @@ export const BACKEND_API_ENDPOINTS = {
   // INSTALLMENTS
   INSTALLMENTS_DUE_ENDPOINT: '/installments/due',
   INSTALLMENTS_PAY_ENDPOINT: '/installments/pay',
+
+  // MONTH CLOSINGS
+  MONTH_CLOSINGS_API_ENDPOINT: '/month-closings',
+  MONTH_CLOSINGS_PREVIEW_ENDPOINT: '/month-closings/preview',
 }
 
 export const ROUTES = {
@@ -107,7 +113,21 @@ export const ERROR_MESSAGES = {
   AMOUNT_FORMAT_ERROR: 'Ingresá un monto válido (hasta 10 dígitos y 2 decimales)',
   INSTALLMENTS_LOAD_ERROR: 'Error al cargar las cuotas vencidas',
   PAY_INSTALLMENTS_ERROR: 'Error al pagar las cuotas. Intenta de nuevo',
+  MONTH_CLOSINGS_LOAD_ERROR: 'Error al cargar los cierres de mes',
+  CLOSING_PREVIEW_ERROR: 'Error al cargar la vista previa del cierre',
+  CLOSE_MONTH_ERROR: 'Error al cerrar el mes. Intenta de nuevo',
 }
+
+// Why a month cannot be closed. The preview only sends the code, so the text lives here
+export const CLOSING_BLOCK_MESSAGES: Record<ClosingBlockReason, string> = {
+  MONTH_NOT_ENDED: 'Solo se pueden cerrar meses anteriores al mes actual',
+  MONTH_BEFORE_WALLET: 'No se puede cerrar un mes anterior al mes en que se activó la billetera',
+  PREVIOUS_MONTH_OPEN: 'Debes cerrar primero el mes anterior',
+  INSTALLMENTS_UNPAID: 'Hay cuotas de este mes sin pagar. Págalas antes de cerrar el mes',
+}
+
+export const WALLET_REQUIRED_TO_CLOSE_MESSAGE =
+  'La cuenta necesita una billetera para poder cerrar un mes'
 
 export const MONTHS = [
   'Enero',
