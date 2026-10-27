@@ -50,6 +50,7 @@ export const useExpenses = (_accountId: number) => {
     }
   }, [])
 
+  // A failure is thrown to the modal, which shows it inline. `error` is only for the list itself
   const createExpense = useCallback(async (data: Partial<ExpenseInterface>) => {
     try {
       setLoading(true)
@@ -59,9 +60,6 @@ export const useExpenses = (_accountId: number) => {
         setExpenses(prev => [newExpense, ...prev])
       }
       return newExpense
-    } catch (err) {
-      setError(ERROR_MESSAGES.CREATE_EXPENSE_ERROR)
-      throw err
     } finally {
       setLoading(false)
     }
@@ -81,6 +79,7 @@ export const useExpenses = (_accountId: number) => {
     }
   }, [])
 
+  // A failure is thrown to the DeleteModal, which shows it inline
   const deleteExpense = useCallback(async (id: number) => {
     try {
       setLoading(true)
@@ -88,9 +87,6 @@ export const useExpenses = (_accountId: number) => {
       await expensesService.deleteExpense(id)
 
       setExpenses(prev => prev.filter(expense => expense.id !== id))
-    } catch (err) {
-      setError(ERROR_MESSAGES.DELETE_EXPENSE_ERROR)
-      throw err
     } finally {
       setLoading(false)
     }
