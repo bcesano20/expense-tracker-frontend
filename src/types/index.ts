@@ -43,6 +43,8 @@ export interface CardFormInterface {
   accountId: number
 }
 
+export type PaymentMethod = 'CASH' | 'TRANSFER' | 'DEBIT' | 'CREDIT' | 'OTHER'
+
 export interface ExpenseInterface {
   id: number
   description: string
@@ -51,7 +53,7 @@ export interface ExpenseInterface {
   category: string | CategoryInterface
   categoryId?: number
   cardId?: number
-  paymentMethod: string
+  paymentMethod: PaymentMethod
   billingMonth: number
   billingYear: number
   accountId: number
@@ -205,7 +207,7 @@ export interface ExpenseDetailInterface {
   amount: number
   date: string
   category: string
-  paymentMethod: string
+  paymentMethod: PaymentMethod
   card: string | null
 }
 
