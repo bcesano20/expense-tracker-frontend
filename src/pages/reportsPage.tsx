@@ -7,7 +7,9 @@ import { useMonthlyReport } from '../hooks/useMonthlyReports'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCategories } from '../hooks/useCategories'
 import { useReports } from '../hooks/useReports'
+import { useInstallments } from '../hooks/useInstallments'
 import {
+  Button,
   EmptyState,
   Navbar,
   MonthSelector,
@@ -17,12 +19,14 @@ import {
   Select,
   BudgetStatusCard,
   IncomeRatioCard,
+  PayInstallmentsModal,
 } from '../components'
 
 export const ReportsPage = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1)
   const [year, setYear] = useState(new Date().getFullYear())
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined)
+  const [showPayInstallmentsModal, setShowPayInstallmentsModal] = useState<boolean>(false)
 
   const { state } = useAuth()
   const activeAccountId = state.activeAccountId
@@ -49,10 +53,25 @@ export const ReportsPage = () => {
     fetchIncomeRatio,
   } = useReports()
 
+  const {
+    dueInstallments,
+    loading: installmentsLoading,
+    error: installmentsError,
+    fetchDueInstallments,
+    payInstallments,
+  } = useInstallments(activeAccountId)
+
   useEffect(() => {
     fetchAccounts()
     fetchCategories()
   }, [fetchAccounts, fetchCategories])
+
+  // Loaded up front (not only when the modal opens) to know if the button has to be enabled.
+  // It doesn't depend on the selected month: what is overdue is decided by the current date
+  useEffect(() => {
+    if (!activeAccountId) return
+    fetchDueInstallments()
+  }, [activeAccountId, fetchDueInstallments])
 
   useEffect(() => {
     if (!activeAccountId) return
@@ -67,6 +86,22 @@ export const ReportsPage = () => {
   }, [selectedCategoryId, month, year, activeAccountId, fetchBudgetStatus])
 
   const monthName = MONTHS[month - 1]
+
+  // The preview is loaded each time the modal opens, so the user confirms the current total
+  const handleOpenPayInstallments = () => {
+    setShowPayInstallmentsModal(true)
+    fetchDueInstallments()
+  }
+
+  const handlePayInstallments = async (expectedTotal: string) => {
+    await payInstallments(expectedTotal)
+    await fetchMonthlyReport(month, year)
+    // Not awaited: the modal closes right after this, and the button disables itself when
+    // nothing is left to pay
+    fetchDueInstallments()
+  }
+
+  const hasInstallmentsToPay = (dueInstallments?.count ?? 0) > 0
 
   if (!activeAccountId) {
     return (
@@ -239,6 +274,21 @@ export const ReportsPage = () => {
                       </div>
                     ))}
                 </div>
+
+                <div className="flex justify-end mt-4">
+                  <Button
+                    onClick={handleOpenPayInstallments}
+                    disabled={!hasInstallmentsToPay}
+                    title={
+                      hasInstallmentsToPay
+                        ? undefined
+                        : (installmentsError ?? 'No hay cuotas vencidas para pagar')
+                    }
+                    className="p-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Pagar Cuotas
+                  </Button>
+                </div>
               </div>
             )}
 
@@ -283,6 +333,16 @@ export const ReportsPage = () => {
           </>
         )}
       </div>
+
+      <PayInstallmentsModal
+        isOpen={showPayInstallmentsModal}
+        currency={activeAccount?.currency}
+        dueInstallments={dueInstallments}
+        onConfirm={handlePayInstallments}
+        onClose={() => setShowPayInstallmentsModal(false)}
+        loading={installmentsLoading}
+        loadError={installmentsError}
+      />
     </div>
   )
 }

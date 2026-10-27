@@ -1,13 +1,8 @@
 import api from './api'
 
 import { BACKEND_API_ENDPOINTS, ERROR_MESSAGES } from '../helpers/constants'
+import { rethrowWithApiMessage } from '../helpers/utils'
 import type { GetExpenseRequestInterface, ExpenseInterface, ApiResponseInterface } from '../types'
-
-// Business errors of the backend (e.g. INSUFFICIENT_FUNDS: "... Faltan 120.50") come in `message`
-const rethrowWithApiMessage = (err: unknown, fallback: string): never => {
-  const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-  throw new Error(message ?? fallback, { cause: err })
-}
 
 export const expensesService = {
   getExpenses: async (data: GetExpenseRequestInterface) => {
