@@ -281,6 +281,50 @@ export interface BudgetStatusDetailInterface {
   usagePercentage: number
 }
 
+// MONTH CLOSING INTERFACES
+// The order is the one the backend checks them in: the first that fails is `firstFailure`
+export type ClosingBlockReason =
+  | 'MONTH_NOT_ENDED'
+  | 'MONTH_BEFORE_WALLET'
+  | 'PREVIOUS_MONTH_OPEN'
+  | 'INSTALLMENTS_UNPAID'
+
+export interface MonthSavingsInterface {
+  amount: number
+  isClosed: boolean
+  closedAt: string | null
+  // 'saved' for a closed month, 'live' when it is calculated right now
+  source: 'saved' | 'live'
+}
+
+export interface ClosingConditionsInterface {
+  monthHasEnded: boolean
+  notBeforeWallet: boolean
+  previousMonthClosed: boolean
+  installmentsPaid: boolean
+}
+
+export interface ClosingPreviewInterface {
+  month: number
+  year: number
+  timeZone: string
+  hasWallet: boolean
+  isClosed: boolean
+  conditions: ClosingConditionsInterface
+  pendingInstallments: number
+  firstFailure: ClosingBlockReason | null
+  canClose: boolean
+  savings: MonthSavingsInterface
+}
+
+// A closed month (item of the list and answer of closing one)
+export interface MonthClosingInterface {
+  month: number
+  year: number
+  savings: number
+  closedAt: string
+}
+
 export interface AccountPeriodRequestInterface {
   accountId: number
   month: number

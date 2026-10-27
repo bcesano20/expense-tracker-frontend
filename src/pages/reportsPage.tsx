@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
 
 import { MONTHS, ROUTES } from '../helpers/constants'
-import { formatCurrency } from '../helpers/utils'
+import { formatCurrency, hasMonthEnded, isMonthClosed } from '../helpers/utils'
 import { useAuth } from '../hooks/useAuth'
 import { useMonthlyReport } from '../hooks/useMonthlyReports'
 import { useAccounts } from '../hooks/useAccounts'
 import { useCategories } from '../hooks/useCategories'
 import { useReports } from '../hooks/useReports'
 import { useInstallments } from '../hooks/useInstallments'
+import { useMonthClosing } from '../hooks/useMonthClosing'
 import {
   Button,
   EmptyState,
@@ -20,6 +21,7 @@ import {
   BudgetStatusCard,
   IncomeRatioCard,
   PayInstallmentsModal,
+  CloseMonthModal,
 } from '../components'
 
 export const ReportsPage = () => {
@@ -27,6 +29,7 @@ export const ReportsPage = () => {
   const [year, setYear] = useState(new Date().getFullYear())
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined)
   const [showPayInstallmentsModal, setShowPayInstallmentsModal] = useState<boolean>(false)
+  const [showCloseMonthModal, setShowCloseMonthModal] = useState<boolean>(false)
 
   const { state } = useAuth()
   const activeAccountId = state.activeAccountId
@@ -61,10 +64,26 @@ export const ReportsPage = () => {
     payInstallments,
   } = useInstallments(activeAccountId)
 
+  const {
+    closings,
+    preview: closingPreview,
+    loading: closingLoading,
+    error: closingError,
+    fetchClosings,
+    fetchPreview: fetchClosingPreview,
+    closeMonth,
+  } = useMonthClosing(activeAccountId)
+
   useEffect(() => {
     fetchAccounts()
     fetchCategories()
   }, [fetchAccounts, fetchCategories])
+
+  // The closed months, to disable the button of a month that is already closed
+  useEffect(() => {
+    if (!activeAccountId) return
+    fetchClosings()
+  }, [activeAccountId, fetchClosings])
 
   // Loaded up front (not only when the modal opens) to know if the button has to be enabled.
   // It doesn't depend on the selected month: what is overdue is decided by the current date
@@ -103,6 +122,32 @@ export const ReportsPage = () => {
 
   const hasInstallmentsToPay = (dueInstallments?.count ?? 0) > 0
 
+  // The balance closed is the one of the selected month, and only once it is over: October's
+  // button stays disabled until November starts (the backend rejects it before that too)
+  const isSelectedMonthClosed = isMonthClosed(closings, month, year)
+  const canOpenCloseMonth = hasMonthEnded(month, year) && !isSelectedMonthClosed
+  const closeMonthDisabledReason = !hasMonthEnded(month, year)
+    ? `Podrás cerrar ${monthName} cuando empiece ${MONTHS[month % 12]}`
+    : isSelectedMonthClosed
+      ? `${monthName} ya está cerrado`
+      : undefined
+
+  // The preview is loaded each time the modal opens, so the user sees the current state
+  const handleOpenCloseMonth = () => {
+    setShowCloseMonthModal(true)
+    fetchClosingPreview(month, year)
+  }
+
+  const handleCloseMonth = async () => {
+    await closeMonth(month, year)
+    // The savings of the month are now the stored ones, and it is locked
+    await Promise.all([
+      fetchClosings(),
+      fetchMonthlyReport(month, year),
+      ...(activeAccountId ? [fetchIncomeRatio({ accountId: activeAccountId, month, year })] : []),
+    ])
+  }
+
   if (!activeAccountId) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -137,13 +182,21 @@ export const ReportsPage = () => {
           </p>
         </div>
 
-        <div className="mb-8 bg-white p-6 rounded-lg shadow">
+        <div className="mb-8 bg-white p-6 rounded-lg shadow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <MonthSelector
             month={month}
             year={year}
             onMonthChange={setMonth}
             onYearChange={setYear}
           />
+          <Button
+            onClick={handleOpenCloseMonth}
+            disabled={!canOpenCloseMonth}
+            title={closeMonthDisabledReason}
+            className="shrink-0 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Cerrar Balance de Mes
+          </Button>
         </div>
 
         {/* Loading/Error */}
@@ -342,6 +395,18 @@ export const ReportsPage = () => {
         onClose={() => setShowPayInstallmentsModal(false)}
         loading={installmentsLoading}
         loadError={installmentsError}
+      />
+
+      <CloseMonthModal
+        isOpen={showCloseMonthModal}
+        monthName={monthName}
+        year={year}
+        currency={activeAccount?.currency}
+        preview={closingPreview}
+        onConfirm={handleCloseMonth}
+        onClose={() => setShowCloseMonthModal(false)}
+        loading={closingLoading}
+        loadError={closingError}
       />
     </div>
   )
